@@ -394,10 +394,31 @@ export default function RootLayout({
 }
 ```
 
-### -
+### - Adding a Markdown Editor
+
+[React Simplemde Editor](https://www.npmjs.com/package/react-simplemde-editor)
+Install
+
+```bash
+npm install --save react-simplemde-editor easymde
+```
 
 ```jsx
+// issues/new/page.tsx (Use SimpleMDE instade of Textarea)
+"use client";
+import { Button, TextArea, TextField } from "@radix-ui/themes";
+import SimpleMDE from "react-simplemde-editor"; // added 1
+import "easymde/dist/easymde.min.css"; // added 2
 
+const NewIssuePage = () => {
+  return (
+    <div className="max-w-xl space-y-3">
+      <TextField.Root placeholder="Title" />
+      <SimpleMDE />
+      <Button>Submit New Issue</Button>
+    </div>
+  );
+};
 ```
 
 ### -
