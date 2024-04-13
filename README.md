@@ -337,16 +337,61 @@ const NewIssuePage = () => {
 };
 ```
 
-### -
+### - Customizing Radix UI Theme
+
+< ThemePanel: [See and customized](https://prnt.sc/p4TeRHtTCoU9)
 
 ```jsx
-
+// app/layout.ts
+return (
+  <html lang="en">
+    <body className={inter.className}>
+      <Theme accentColor="violet">
+        <NavBar />
+        <main className="p-5">{children}</main>
+        <ThemePanel />
+      </Theme>
+    </body>
+  </html>
+);
 ```
 
-### -
+**Change font: Inter font is not applying here because of Radix [Typographoy](https://www.radix-ui.com/themes/docs/theme/typography)**
+You can keep css in globals.css/theme-config.css, add this syntax !important;
 
 ```jsx
+import "@radix-ui/themes/styles.css";
+import "./theme-config.css";
 
+import { Inter } from "next/font/google";
+import { Theme, ThemePanel } from "@radix-ui/themes";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode,
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.variable}>
+        <Theme accentColor="violet">
+          <NavBar />
+          <main className="p-5 radix-themes">{children}</main>
+        </Theme>
+      </body>
+    </html>
+  );
+}
+
+// globals.css ( !important is urgent )
+.radix-themes {
+  --default-font-family: var(--font-inter) !important;
+}
 ```
 
 ### -
