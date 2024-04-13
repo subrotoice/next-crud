@@ -261,16 +261,52 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-### -
+### - Setting up Radix UI
 
-```jsx
+[radix-ui.com](https://www.radix-ui.com)
 
+1. Install Radix Themes
+
+```bash
+npm install @radix-ui/themes
 ```
 
-### -
+2. Import the CSS root app/layout.ts
 
 ```jsx
+// app/layout.ts
+import "@radix-ui/themes/styles.css";
+```
 
+3. Add the Theme component - root app/layout.ts
+
+```jsx
+// app/layout.ts
+import { Theme } from "@radix-ui/themes";
+
+export default function () {
+  return (
+    <html>
+      <body>
+        <Theme>
+          <MyApp />
+        </Theme>
+      </body>
+    </html>
+  );
+}
+
+// issues/page.ts
+import React from "react";
+import { Button } from "@radix-ui/themes";
+
+const IssuesPage = () => {
+  return (
+    <div>
+      <Button>New Issue</Button>
+    </div>
+  );
+};
 ```
 
 ### -
