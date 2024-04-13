@@ -1,5 +1,16 @@
 ## Chapters
 
+Ch-1: Getting Started
+Ch-2: Creating Issues
+Ch-3: Viewing Issues
+Ch-4: Updating Issues
+Ch-5: Deleting Issues
+Ch-6: Authentication
+Ch-7: Assigning Issues to Users
+Ch-8: Filtering, Sorting, and Pagination
+Ch-9: Dashboard
+Ch-10: Going to Production
+
 ## Ch-1: Getting Started
 
 ### - How to start and finish a Project
@@ -132,16 +143,37 @@ href={link.href}
 >
 ```
 
-### -
+## Ch-2: Creating Issues
 
-```jsx
+### - Install mysql
 
+Wamp for testing
+
+### - Setting Up Prisma
+
+```bash
+npm i prisma
 ```
 
-### -
+Initializing Prisma - npx create folder
+
+```bash
+npx prisma init
+```
+
+Now in prisma/schema.prisma (datasource>provider to mysql)
 
 ```jsx
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+```
 
+.env file [Connection String Format](https://prnt.sc/Z1H-zDfYb5b1) For MySql Database
+
+```jsx
+DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker";
 ```
 
 ### -
