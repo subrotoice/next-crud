@@ -173,13 +173,33 @@ datasource db {
 .env file [Connection String Format](https://prnt.sc/Z1H-zDfYb5b1) For MySql Database
 
 ```jsx
-DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker";
+DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker"  ----Connection String----
 ```
 
-### -
+### - Creating the issue model
+
+- Just create simple model. Not assignin issue to user so no relationship
 
 ```jsx
+// schema.prisma (Model: Pascale Case and singular name)
+model Issue {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  status      Status   @default(OPEN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+```
+
+```bash
+npx prisma format
 ```
 
 ### -
