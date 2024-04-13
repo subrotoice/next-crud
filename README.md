@@ -173,7 +173,7 @@ datasource db {
 .env file [Connection String Format](https://prnt.sc/Z1H-zDfYb5b1) For MySql Database
 
 ```jsx
-DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker"  ----Connection String----
+DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker"  ----Connection String no ";" @end----
 ```
 
 ### - Creating the issue model
@@ -202,10 +202,63 @@ enum Status {
 npx prisma format
 ```
 
-### -
+### - Building an API
+
+```bash
+npm i zod@3.22.2
+```
+
+Best Practice: Make sure create only one instance of [Prisma Client](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices)<br>
 
 ```jsx
+// prisma/client.ts (Only Once)
+import { PrismaClient } from "@prisma/client";
 
+const prismaClientSingleton = () => {
+  return new PrismaClient();
+};
+
+declare global {
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
+}
+
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+
+```
+
+**Make sure async - await is properly placed when building API**
+
+```jsx
+// app/api/issues/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import prisma from "@/prisma/client";
+
+const createIssueSchema = z.object({
+  title: z.string().min(1).max(255),
+  description: z.string().min(1),
+});
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  const validation = createIssueSchema.safeParse(body);
+
+  if (!validation.success)
+    return NextResponse.json(validation.error.errors, { status: 400 });
+
+  const newIssue = await prisma.issue.create({
+    data: {
+      title: body.title,
+      description: body.description,
+    },
+  });
+
+  return NextResponse.json(newIssue, { status: 201 });
+}
 ```
 
 ### -
