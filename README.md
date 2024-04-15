@@ -793,10 +793,33 @@ const IssuesPage = async () => {
 };
 ```
 
-### -
+### - Building the Issue Status Badge
+
+- You can grab any Prisma Model type/interface. [Click](https://prnt.sc/Fg-cvBJFqk04)
+- Record is typescript concept using for key-value pair
 
 ```jsx
+// issues/page.tsx
+<IssueStatusBadge status={issue.status} />;
 
+// IssueStatusBadge.tsx
+import { Status } from "@prisma/client";
+import { Badge } from "@radix-ui/themes";
+import React from "react";
+
+const statusMap: Record<
+  Status,
+  { label: string, color: "red" | "violet" | "green" }
+> = {
+  OPEN: { label: "Open", color: "red" },
+  IN_PROGRESS: { label: "In Progress", color: "violet" },
+  CLOSED: { label: "Closed", color: "green" },
+};
+const IssueStatusBadge = ({ status }: { status: Status }) => {
+  return (
+    <Badge color={statusMap[status].color}>{statusMap[status].label}</Badge>
+  );
+};
 ```
 
 ### -
