@@ -469,10 +469,65 @@ const NewIssuePage = () => {
 };
 ```
 
-### -
+### - Handling Errors (Server side - API)
 
 ```jsx
+// issues/new/page.tsx
+return (
+  <div className="max-w-xl">
+    {error && (
+      <Callout.Root color="red" className="mb-3">
+        <Callout.Text>{error}</Callout.Text>
+      </Callout.Root>
+    )}
+    <form
+      className="space-y-3"
+      onSubmit={handleSubmit(async (data) => {
+        try {
+          await axios.post("/api/issues", data);
+          router.push("/issues");
+        } catch (error) {
+          console.log(error);
+          setError("An unexpected error occurred.");
+        }
+      })}
+    >
+      <TextField.Root placeholder="Title" {...register("title")} />
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <SimpleMDE placeholder="Description" {...field} />
+        )}
+      />
 
+      <Button type="submit">Submit New Issue</Button>
+    </form>
+  </div>
+);
+
+// api/issues/page.tsx
+const createIssueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255), // Added MSG
+  description: z.string().min(1, "Description is required."),
+});
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  const validation = createIssueSchema.safeParse(body);
+
+  if (!validation.success)
+    return NextResponse.json(validation.error.format(), { status: 400 }); // Added .format()
+
+  const newIssue = await prisma.issue.create({
+    data: {
+      title: body.title,
+      description: body.description,
+    },
+  });
+
+  return NextResponse.json(newIssue, { status: 201 });
+}
 ```
 
 ### -
