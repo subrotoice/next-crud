@@ -665,10 +665,44 @@ const ErrorMessage = ({ children }: PropsWithChildren) => {
 };
 ```
 
-### -
+### - Adding a Spinner (When submitting form)
+
+[Google: Tailwind Elements Spinner](https://tw-elements.com/docs/standard/components/spinners/)
 
 ```jsx
+// issues/new/page.tsx
+const [isSubmitting, setSubmitting] = useState(false);
+<Button type="submit">Submit New Issue {isSubmitting && <Spinner />}</Button>;
+<form
+  className="space-y-3"
+  onSubmit={handleSubmit(async (data) => {
+    try {
+      setSubmitting(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      // console.log(error);
+      setSubmitting(false);
+      setError("An unexpected error occurred.");
+    }
+  })}
+>
 
+// app/conponents/Spinner.tsx
+import React from "react";
+
+const Spinner = () => {
+  return (
+    <div
+      className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+      role="status"
+    >
+      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+        Loading...
+      </span>
+    </div>
+  );
+};
 ```
 
 ### -
