@@ -469,7 +469,9 @@ const NewIssuePage = () => {
 };
 ```
 
-### - Handling Errors (Server side - API)
+### - Handling Errors | Server side validaion (Server side - API)
+
+- Server and Client both validation is must needed. First need to build Server side validation then Client side. Because If we build Client side validation then it will difficult to test server side validation.
 
 ```jsx
 // issues/new/page.tsx
@@ -487,7 +489,7 @@ return (
           await axios.post("/api/issues", data);
           router.push("/issues");
         } catch (error) {
-          console.log(error);
+          console.log(error); // debugge here
           setError("An unexpected error occurred.");
         }
       })}
@@ -530,15 +532,111 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-### -
+### - Implement Client-Side Validation
 
-```jsx
+1. Install [Resolvers](https://www.npmjs.com/package/@hookform/resolvers)
+2. createIssueSchema object bring Out of api/issues/page.ts using refactor because we can not export other thing from a route.ts file to use it in issues/new/page.tsx. [Click](https://prnt.sc/DsgOQO1ikUc7)
+3. Work on issues/new/page.tsx
 
+```bash
+npm i @hookform/resolvers
 ```
 
-### -
+**Refactor createIssueSchema and move to new file. Because we can export this variable but route.ts only export GET, POST, PUT, DELETE**
 
 ```jsx
+// api/issues/page.ts
+import { z } from "zod";
+import prisma from "@/prisma/client";
+
+const createIssueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255),
+  description: z.string().min(1, "Description is required."),
+});
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+........
+
+to----->
+
+import prisma from "@/prisma/client";
+import { createIssueSchema } from "../../validationSchema";
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+// ValidationSchema.ts
+import { z } from "zod";
+
+export const createIssueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255),
+  description: z.string().min(1, "Description is required."),
+});
+
+// issues/new/page.tsx (need not create redundent interface we can grab type from zod interface)
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createIssueSchema } from "@/app/validationSchema";
+import { z } from "zod";
+
+type IssueForm = z.infer<typeof createIssueSchema>;
+
+const NewIssuePage = () => {
+  const router = useRouter();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+  });
+  const [error, setError] = useState("");
+
+  return (
+    <div className="max-w-xl">
+      {error && (
+        <Callout.Root color="red" className="mb-3">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form
+        className="space-y-3"
+        onSubmit={handleSubmit(async (data) => {
+          try {
+            await axios.post("/api/issues", data);
+            router.push("/issues");
+          } catch (error) {
+            console.log(error);
+            setError("An unexpected error occurred.");
+          }
+        })}
+      >
+        <TextField.Root placeholder="Title" {...register("title")} />
+        {errors.title && (
+          <Text color="red" as="p">
+            {errors.title.message}
+          </Text>
+        )}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <SimpleMDE placeholder="Description" {...field} />
+          )}
+        />
+        {errors.description && (
+          <Text color="red" as="p">
+            {errors.description.message}
+          </Text>
+        )}
+        <Button type="submit">Submit New Issue</Button>
+      </form>
+    </div>
+  );
+};
+..........
 
 ```
 
