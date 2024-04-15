@@ -705,10 +705,40 @@ const Spinner = () => {
 };
 ```
 
-### -
+### - Code Organization: Refactoring (Inline function to outside function defination)
+
+- onSubmit: just cut inline function and paste it
+- Separation of Concerns: Separate a program into distinct modules each having a separate concern.
+  If concerns are well separated, there are more opportunities for code reuse.
+- Software Engineering is not Black and White. "This is the best practice! You should always do things this way!" Not like this
 
 ```jsx
+// issues/new/page.tsx
+import ErrorMessage from "@/app/components/ErrorMessage";
 
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setSubmitting(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      // console.log(error);
+      setSubmitting(false);
+      setError("An unexpected error occurred.");
+    }
+  });
+
+  return (
+      <form className="space-y-3" onSubmit={onSubmit}>
+        <TextField.Root placeholder="Title" {...register("title")} />
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <SimpleMDE placeholder="Description" {...field} />
+          )}
+        />
 ```
 
 ### -
