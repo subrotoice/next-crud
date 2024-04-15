@@ -640,10 +640,29 @@ const NewIssuePage = () => {
 
 ```
 
-### -
+### - Extractiong the ErrorMessage Component
+
+- Create seperate component for displaying error message to make it consistant and well organized.
 
 ```jsx
+// issues/new/page.tsx
+<ErrorMessage>{errors.title?.message}</ErrorMessage>;
 
+// app/components/ErrorMessage.tsx
+import { Text } from "@radix-ui/themes";
+import React, { PropsWithChildren } from "react";
+
+const ErrorMessage = ({ children }: PropsWithChildren) => {
+  return (
+    <>
+      {children && (
+        <Text color="red" as="p">
+          {children}
+        </Text>
+      )}
+    </>
+  );
+};
 ```
 
 ### -
