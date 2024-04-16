@@ -915,10 +915,42 @@ const LoadingIssuePage = () => {
 };
 ```
 
-### - Showing Issue Details
+**NB: page.tsx, loading.tsx, layout.tsx anything could be make client component, if it not contain any server function like prisma.model.findMany()**
+
+### - Showing Issue Details - Only fetch data not style
+
+- Add loading page both in new and [id] folder to get ride of skeleton loading of issues folder
 
 ```jsx
+// issues/[id]/page.tsx
+import prisma from "@/prisma/client";
+import { notFound } from "next/navigation";
 
+const SingleIssuePage = async ({
+  params: { id },
+}: {
+  params: { id: string },
+}) => {
+  if (typeof id !== "number") notFound();
+
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(id) },
+  });
+
+  if (!issue) notFound(); // don't use return notFound(); It return null
+
+  return (
+    <div>
+      <p>{issue.title}</p>
+      <p>{issue.description}</p>
+      <p>{issue.status}</p>
+      <p>{issue.createdAt.toDateString()}</p>
+    </div>
+  );
+};
+
+// issues/page.tsx
+<Link href={`/issues/${issue.id}`}>{issue.title}</Link>;
 ```
 
 ### -
