@@ -643,6 +643,7 @@ const NewIssuePage = () => {
 ### - Extractiong the ErrorMessage Component
 
 - Create seperate component for displaying error message to make it consistant and well organized.
+- NB: If a component is only need for a page then create it localy, If you want to reuse it different pages then create in /app/components/myCommponent.tsx
 
 ```jsx
 // issues/new/page.tsx
@@ -822,31 +823,99 @@ const IssueStatusBadge = ({ status }: { status: Status }) => {
 };
 ```
 
-### -
+### - Adding Loading Skeletons
 
-```jsx
+- use delay to watch loading skeletons properly.
 
+```bash
+npm i delay
 ```
 
-### -
-
 ```jsx
-
+// in issues/page.tsx (before return)
+await delay(2000);
 ```
 
-### -
+- Use [React-Loading-Skeleton
+  ](https://www.npmjs.com/package/react-loading-skeleton)
 
-```jsx
-
+```bash
+npm i react-loading-skeleton
 ```
 
-### -
-
 ```jsx
-
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 ```
 
-### -
+- add a new component IssueAction.tsx in local folder
+
+```jsx
+// issues/IssueActions.tsx
+import { Button } from "@radix-ui/themes";
+import Link from "next/link";
+import React from "react";
+
+const IssueActions = () => {
+  return (
+    <div className="mb-5">
+      <Button>
+        <Link href="/issues/new">New Issue</Link>
+      </Button>
+    </div>
+  );
+};
+
+// issues/loading.tsx
+import { Table } from "@radix-ui/themes";
+import React from "react";
+import IssueStatusBadge from "../components/IssueStatusBadge";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import IssueActions from "./IssueActions";
+
+const LoadingIssuePage = () => {
+  const issues = [1, 2, 3, 4, 5];
+  return (
+    <>
+      <IssueActions />
+      <Table.Root variant="surface">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Status
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Created
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {issues.map((issue) => (
+            <Table.Row key={issue}>
+              <Table.Cell>
+                <Skeleton />
+                <div className="md:hidden">
+                  <Skeleton />
+                </div>
+              </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                <Skeleton />
+              </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                <Skeleton />
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </>
+  );
+};
+```
+
+### - Showing Issue Details
 
 ```jsx
 
