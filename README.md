@@ -1111,10 +1111,41 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
 });
 ```
 
-### -
+### - Refactoring: Organizing Imports
+
+- Run "Organized Import"
+- In components folder many component. We can combine in components/index.js
 
 ```jsx
+// components/index.js
+import Link from "./Link";
+import ErrorMessage from "./ErrorMessage";
+import IssueStatusBadge from "./IssueStatusBadge";
+import Spinner from "./Spinner";
 
+export { Link };
+export { ErrorMessage };
+export { IssueStatusBadge };
+export { Spinner };
+
+// Or One Line export-import
+export { default as Link } from "./Link";
+export { default as ErrorMessage } from "./ErrorMessage";
+export { default as Skeleton } from "./Skeleton";
+
+// components/Skeleton.ts
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+export default Skeleton;
+
+// components/index.js
+export { default as Skeleton } from "./Skeleton";
+
+// issues/page.tsx
+import { IssueStatusBadge, Link } from "@/app/components"; // index.js so not need to add it
+// loading.tsx
+import { Skeleton } from "@/app/components";
 ```
 
 ### -
