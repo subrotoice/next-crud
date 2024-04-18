@@ -1022,7 +1022,7 @@ Step 3: add prose
 </Card>
 ```
 
-````jsx
+```jsx
 // issues/[id]/page.tsx
 return (
   <div>
@@ -1036,13 +1036,30 @@ return (
     </Card>
   </div>
 );
+```
 
+### - Buliding a Styled Link Component (components/Link.tsx)
 
-### -
+- Custom link creation. Combine next link which has client side navigation. Radix link has beautiful look and feel. Hear combine both
 
 ```jsx
+import NextLink from "next/link";
+import { Link as RadixLink } from "@radix-ui/themes";
 
-````
+interface Props {
+  href: string;
+  children: string;
+}
+
+const Link = ({ href, children }: Props) => {
+  // next link pass two props
+  return (
+    <NextLink href={href} passHref legacyBehavior>
+      <RadixLink>{children}</RadixLink>
+    </NextLink>
+  );
+};
+```
 
 ### -
 
