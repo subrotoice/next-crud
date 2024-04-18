@@ -1061,16 +1061,54 @@ const Link = ({ href, children }: Props) => {
 };
 ```
 
-### -
+### - Additional Loading Skeletons (Single issue loading page)
+
+- Copy orginal markup of single issue then place loading Skeleton.
+- Use await delay(3000) to watch it poperly.
 
 ```jsx
+// issues/[id]/loading.tsx
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
+const LoadingIssueDetailsPage = () => {
+  return (
+    <Box className="max-w-xl">
+      <Skeleton />
+      <Flex className="space-x-3" my="2">
+        <Skeleton width="3rem" />
+        <Skeleton width="5rem" />
+      </Flex>
+      <Card className="prose" mt="4">
+        <Skeleton count={5} />
+      </Card>
+    </Box>
+  );
+};
+
+// issues/new/loading.tsx
+import { Box } from "@radix-ui/themes";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+const LoadingNewIssuePage = () => {
+  return (
+    <Box className="max-w-xl">
+      <Skeleton />
+      <Skeleton height="20rem" />
+    </Box>
+  );
+};
 ```
 
-### -
+### - Disabling Server-side Rendering
 
 ```jsx
+import dynamic from "next/dynamic";
 
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
 ```
 
 ### -
