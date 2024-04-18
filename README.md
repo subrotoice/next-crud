@@ -953,35 +953,96 @@ const SingleIssuePage = async ({
 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>;
 ```
 
+### - Styling the Issue Detail Page
+
+```jsx
+// issues/[id]/page.tsx
+import IssueStatusBadge from "@/app/components/IssueStatusBadge";
+import prisma from "@/prisma/client";
+
+const SingleIssuePage = async ({
+  params: { id },
+}: {
+  params: { id: string },
+}) => {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(id) },
+  });
+
+  if (!issue) notFound(); // don't use return notFound(); It return null
+
+  return (
+    <div>
+      <Heading>{issue.title}</Heading>
+      <Flex className="space-x-3" my="2">
+        <IssueStatusBadge status={issue.status} />
+        <Text>{issue.createdAt.toDateString()}</Text>
+      </Flex>
+      <Card>
+        <p>{issue.description}</p>
+      </Card>
+    </div>
+  );
+};
+```
+
+### - Adding Markdown Preview
+
+All description show as a paragraph but If we install packege react-markdown then it shows like heading, list, bold etc
+
+```bash
+npm i react-markdown
+```
+
+Now everything comes properly [See](https://prnt.sc/twmcz8O_L0yh). Only problem is tailwind by default desable some style. So we need to install a packeg which will give beautiful style.
+
+```
+
+```
+
+Step 1: Install
+
+```bash
+npm install -D @tailwindcss/typography
+```
+
+Step 2: Add to plugins
+require('@tailwindcss/typography') put this in plagins array of tailwind.config.ts
+
+```jsx
+// tailwind.config.ts
+plugins: [require("@tailwindcss/typography")],
+```
+
+Step 3: add prose
+
+```jsx
+<Card className="prose">
+  <ReactMarkdown>{issue.description}</ReactMarkdown>
+</Card>
+```
+
+````jsx
+// issues/[id]/page.tsx
+return (
+  <div>
+    <Heading>{issue.title}</Heading>
+    <Flex className="space-x-3" my="2">
+      <IssueStatusBadge status={issue.status} />
+      <Text>{issue.createdAt.toDateString()}</Text>
+    </Flex>
+    <Card className="prose" mt="4">
+      <ReactMarkdown>{issue.description}</ReactMarkdown>
+    </Card>
+  </div>
+);
+
+
 ### -
 
 ```jsx
 
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
+````
 
 ### -
 
