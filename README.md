@@ -1148,10 +1148,39 @@ import { IssueStatusBadge, Link } from "@/app/components"; // index.js so not ne
 import { Skeleton } from "@/app/components";
 ```
 
-### -
+## Ch-4: Updating Issues
+
+### - Add the edit Button (Just creating UI no functionality)
+
+- Radix ui Grid component with dynamic colums by passing object
+- Install radix-ui icons for pencil icon
+
+```bash
+npm i @radix-ui/react-icons
+```
 
 ```jsx
-
+// issues/page.tsx
+return (
+  <Grid columns={{ initial: "1", md: "2" }}>
+    <Box>
+      <Heading>{issue.title}</Heading>
+      <Flex className="space-x-3" my="2">
+        <IssueStatusBadge status={issue.status} />
+        <Text>{issue.createdAt.toDateString()}</Text>
+      </Flex>
+      <Card className="prose" mt="4">
+        <ReactMarkdown>{issue.description}</ReactMarkdown>
+      </Card>
+    </Box>
+    <Box>
+      <Button>
+        <Pencil2Icon />
+        <Link href={`/issues/${issue.id}/edit`}> Edit Issue</Link>
+      </Button>
+    </Box>
+  </Grid>
+);
 ```
 
 ### -
