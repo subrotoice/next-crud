@@ -1183,10 +1183,63 @@ return (
 );
 ```
 
-### -
+### - Refactor: Applying the single responsibility Principle
+
+- Software entity sholud have single responsibility, then the code will more maintainable, Reuseable, Extendable.
+- If you have a page with a lot of import statement that is a signal violating single responsibility principle.
+- We break down issues/[id]/page.tsx into EditIssueButton.tsx and IssueDetails.tsx keep same folder because it will not reuse any other pages and this is the pieces of this page.
+- If only one props then inline props is good.
+- By doing this break down of page.tsx, in future if we want to change th layout of the only file we have to touch page.tsx, similarly if we want to change the layout of issiue details IssueDetails.tsx is the only file we need to modify. This is the benefit of applying single responsibility principle.
 
 ```jsx
+// issues/[id]/page.tsx (Just break it down)
+return (
+  <Grid columns={{ initial: "1", md: "2" }}>
+    <Box>
+      <IssueDetails issue={issue} />
+    </Box>
+    <Box>
+      <EditIssueButton issueId={issue.id} />
+    </Box>
+  </Grid>
+);
 
+// IssueDetails.tsx
+import { IssueStatusBadge } from "@/app/components";
+import { Issue } from "@prisma/client";
+import { Heading, Flex, Card, Text } from "@radix-ui/themes";
+import React from "react";
+import ReactMarkdown from "react-markdown";
+
+const IssueDetails = ({ issue }: { issue: Issue }) => {
+  return (
+    <>
+      <Heading>{issue.title}</Heading>
+      <Flex className="space-x-3" my="2">
+        <IssueStatusBadge status={issue.status} />
+        <Text>{issue.createdAt.toDateString()}</Text>
+      </Flex>
+      <Card className="prose" mt="4">
+        <ReactMarkdown>{issue.description}</ReactMarkdown>
+      </Card>
+    </>
+  );
+};
+
+// EditIssueButton.tsx
+import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Button } from "@radix-ui/themes";
+import Link from "next/link";
+import React from "react";
+
+const EditIssueButton = ({ issueId }: { issueId: number }) => {
+  return (
+    <Button>
+      <Pencil2Icon />
+      <Link href={`/issues/${issueId}/edit`}> Edit Issue</Link>
+    </Button>
+  );
+};
 ```
 
 ### -
