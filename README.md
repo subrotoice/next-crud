@@ -1242,10 +1242,121 @@ const EditIssueButton = ({ issueId }: { issueId: number }) => {
 };
 ```
 
-### -
+### - Building the edit issue page (Very smart work: Just copy new issue form)
+
+1. Create folder "edit" in [id] and another folder _components in Issues folder, here use "_" to keep it out from routing system ie. you can not access here.
+2. Cut everything from issues/new/page.tsx and paste it directly in \_components/IssueForm.tsx (change the component name and interface type name) and import this component in new/page.tsx and test application.
+3. Create another file in edit/page.tsx and import IssueForm with issue props and in \_components/IssueForm.tsx populate input field with defaultValue props.
 
 ```jsx
+// new/page.tsx
+import IssueForm from "../_components/IssueForm";
 
+const NewIssuePage = () => {
+  return <IssueForm />;
+};
+
+export default NewIssuePage;
+
+// [id]/edit/page.tsx
+import IssueForm from "../../_components/IssueForm";
+import prisma from "@/prisma/client";
+import { notFound } from "next/navigation";
+
+interface Props {
+  params: { id: string };
+}
+
+const EditIssuePage = async ({ params }: Props) => {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  if (!issue) notFound();
+
+  return <IssueForm issue={issue} />;
+};
+
+// issues/_components/IssueForm.tsx (First copy exactly from new/page.tsx then some rename and receive some props and put that as value of input fields)
+(" use client ");
+import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
+import { createIssueSchema } from "@/app/validationSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Issue } from "@prisma/client";
+import { Button, Callout, TextField } from "@radix-ui/themes";
+import axios from "axios";
+import "easymde/dist/easymde.min.css";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
+
+type IssueFormData = z.infer<typeof createIssueSchema>;
+
+const IssueForm = ({ issue }: { issue?: Issue }) => {
+  const router = useRouter();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm <
+  IssueFormData >
+  {
+    resolver: zodResolver(createIssueSchema),
+  };
+  // console.log(errors);
+  const [error, setError] = useState(""); // to handel error comes form server
+  const [isSubmitting, setSubmitting] = useState(false);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setSubmitting(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      // console.log(error);
+      setSubmitting(false);
+      setError("An unexpected error occurred.");
+    }
+  });
+
+  return (
+    <div className="max-w-xl">
+      {error && (
+        <Callout.Root color="red" className="mb-3">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form className="space-y-3" onSubmit={onSubmit}>
+        <TextField.Root
+          defaultValue={issue?.title}
+          placeholder="Title"
+          {...register("title")}
+        />
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        <Controller
+          name="description"
+          control={control}
+          defaultValue={issue?.description}
+          render={({ field }) => (
+            <SimpleMDE placeholder="Description" {...field} />
+          )}
+        />
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
+        <Button type="submit">
+          Submit New Issue {isSubmitting && <Spinner />}
+        </Button>
+      </form>
+    </div>
+  );
+};
 ```
 
 ### -
