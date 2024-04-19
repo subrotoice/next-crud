@@ -1361,11 +1361,14 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 
 ### - Building an API for updating Issue (api/issues/[id]/route.ts)
 
+**PUT: Replacing entire Object** <br>
+**PATCH: Updating one or more property**
+
 - Careful: add "await" before request.json() and return before NextResponse.json()
 
-1. Perse request body for validation
-2. Fetch issue and check it exist
-3. Update and Return Output
+1. Check request body
+2. Check issue in DB
+3. Update and Return
 
 ```jsx
 // api/issues/[id]/route.ts
@@ -1402,10 +1405,85 @@ export async function PATCH(
 }
 ```
 
-### -
+### - Updating Issues (\_components/IssueForm.tsx)
+
+**Two Places need to update**
+
+1. if (issue) await axios.patch(`/api/issues/${issue.id}`, data);
+   else await axios.post("/api/issues", data);
+2. {issue ? "Update Issue" : "Submit New Issue"}
 
 ```jsx
+"use client";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
+
+type IssueFormData = z.infer<typeof IssueSchema>;
+
+const IssueForm = ({ issue }: { issue?: Issue }) => {
+  const router = useRouter();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm <
+  IssueFormData >
+  {
+    resolver: zodResolver(IssueSchema),
+  };
+  // console.log(errors);
+  const [error, setError] = useState(""); // to handel error comes form server
+  const [isSubmitting, setSubmitting] = useState(false);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setSubmitting(true);
+      if (issue) await axios.patch(`/api/issues/${issue.id}`, data);
+      else await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      // console.log(error);
+      setSubmitting(false);
+      setError("An unexpected error occurred.");
+    }
+  });
+
+  return (
+    <div className="max-w-xl">
+      {error && (
+        <Callout.Root color="red" className="mb-3">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form className="space-y-3" onSubmit={onSubmit}>
+        <TextField.Root
+          defaultValue={issue?.title}
+          placeholder="Title"
+          {...register("title")}
+        />
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        <Controller
+          name="description"
+          control={control}
+          defaultValue={issue?.description}
+          render={({ field }) => (
+            <SimpleMDE placeholder="Description" {...field} />
+          )}
+        />
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
+        <Button type="submit">
+          {issue ? "Update Issue" : "Submit New Issue"}{" "}
+          {isSubmitting && <Spinner />}
+        </Button>
+      </form>
+    </div>
+  );
+};
 ```
 
 ### -
