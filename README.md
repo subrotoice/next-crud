@@ -1359,10 +1359,47 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 };
 ```
 
-### -
+### - Building an API for updating Issue (api/issues/[id]/route.ts)
+
+- Careful: add "await" before request.json() and return before NextResponse.json()
+
+1. Perse request body for validation
+2. Fetch issue and check it exist
+3. Update and Return Output
 
 ```jsx
+// api/issues/[id]/route.ts
+import { IssueSchema } from "@/app/validationSchema";
+import prisma from "@/prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const body = await request.json();
+  const validation = IssueSchema.safeParse(body);
+
+  if (!validation.success)
+    return NextResponse.json(validation.error.format(), { status: 400 });
+
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  if (!issue)
+    return NextResponse.json({ error: "Invald Issue" }, { status: 404 });
+
+  const updatedIssue = await prisma.issue.update({
+    where: { id: issue?.id },
+    data: {
+      title: body.title,
+      description: body.description,
+    },
+  });
+
+  return NextResponse.json(updatedIssue);
+}
 ```
 
 ### -
