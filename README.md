@@ -1524,16 +1524,52 @@ router.push("/issues");
 router.refresh();
 ```
 
-### -
+### - Improving the Loading Experience. Lazy Loading
+
+- Load add or update IssueForm lazy and at a time.
+- Use dynamic() for lazy loading
 
 ```jsx
+// new/page.tsx
+import dynamic from "next/dynamic";
+import IssueFormSkeleton from "../_components/IssueFormSkeleton";
 
+const IssueForm = dynamic(() => import("@/app/issues/_components/IssueForm"), {
+  ssr: false,
+  loading: () => <IssueFormSkeleton />,
+});
+
+const NewIssuePage = () => {
+  return <IssueForm />;
+};
+
+// IssueForm.tsx (Import directly because it will load using dynamic funciton and ssr: false)
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), { // old
+  ssr: false,
+});
+to--->
+import SimpleMdeReact from "react-simplemde-editor"; // New
 ```
 
-### -
+- Create \_components/IssueFormSkeleton.tsx, it repeate several places
 
 ```jsx
+// _components/IssueFormSkeleton.tsx
+import { Box } from "@radix-ui/themes";
+import { Skeleton } from "@/app/components";
 
+const IssueFormSkeleton = () => {
+  return (
+    <Box className="max-w-xl">
+      <Skeleton height="2rem" />
+      <Skeleton height="20rem" />
+    </Box>
+  );
+};
+
+// in loading.tsx
+import IssueFormSkeleton from "../../_components/IssueFormSkeleton";
+export default IssueFormSkeleton;
 ```
 
 ### -
