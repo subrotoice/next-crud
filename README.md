@@ -1486,22 +1486,42 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
 };
 ```
 
-### -
+### - Understanding Caching (3 types- Data(Server), Full Route(Server), Router(Client)) VVI
+
+1. Data Cache: When we fetch data using fetch(): Stored in file system, Permanent untill re-deploy (Cache on the server)
 
 ```jsx
-
+fetch("...", { cache: "no-store" });
+fetch("...", { next: { revalidate: 3600 } }); // 3600sec
 ```
 
-### -
+2. Full Route Cache (Cache on the server): Used to store the output of statically rendered routes. (o static rendiring - build time) (λ dynamic routing - request time)<br >
+   NextJS Don't have a parameter static route by default. [Click](https://prnt.sc/RS4uaYXk2Eeo)<br>
+   Build application(npm run build) and Start builded app(npm start)<br>
+   o Static rendiring: Data will not refetching no metter what how many refresh you are doing. Need to re-build<br>
+   Export force-dynamic to make static page dynamic. [Result](https://prnt.sc/CyTC6RT4Ocz6)
 
 ```jsx
+// issues/page.tsx
+      </Table.Root>
+    </div>
+  );
+};
 
+export const dynamic = "force-dynamic"; // TO make a static page dynamic
+// export const revalidate = 10; // revalidate every 10 sec
+
+export default IssuesPage;
 ```
 
-### -
+3. Router Cache (Client Cache): To store the payload of pages in browser, refreshed when we reload. If one page is fetched then need not to make network request.<br>
+   For, o Static route client cache invalidation period is 5 min (After this period refetch from network)<br>
+   For, λ Dynamic route client cache invalidation period is 30 sec
 
 ```jsx
-
+// IssueForm.tsx (Tell next js refresh the content of the current route)
+router.push("/issues");
+router.refresh();
 ```
 
 ### -
