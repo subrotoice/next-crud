@@ -44,29 +44,29 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   });
 
   return (
-    <div className="max-w-xl">
+    <div className='max-w-xl'>
       {error && (
-        <Callout.Root color="red" className="mb-3">
+        <Callout.Root color='red' className='mb-3'>
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form className="space-y-3" onSubmit={onSubmit}>
+      <form className='space-y-3' onSubmit={onSubmit}>
         <TextField.Root
           defaultValue={issue?.title}
-          placeholder="Title"
+          placeholder='Title'
           {...register("title")}
         />
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
-          name="description"
+          name='description'
           control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMdeReact placeholder="Description" {...field} />
+            <SimpleMdeReact placeholder='Description' {...field} />
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button type="submit">
+        <Button type='submit'>
           {issue ? "Update Issue" : "Submit New Issue"}{" "}
           {isSubmitting && <Spinner />}
         </Button>
