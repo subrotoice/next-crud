@@ -1710,10 +1710,40 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
 };
 ```
 
-### -
+### - Handling Errors
+
+- If there is less code then one line. No need to do over engineering.
 
 ```jsx
+// issues/[id]/DeleteIssueButon.tsx (If less code then one line)
+<Button
+  color='red'
+  onClick={async () => {
+    await axios.delete("/api/issues/" + issueId);
+    router.push("/issues");
+    router.refresh();
+  }}
+>
+  Delete Issue
+</Button>
 
+// This code could be with error handeliing
+const deleteIssue = async () => {
+  try {
+    // throw new Error();
+    await axios.delete("/api/issues/" + issueId);
+    router.push("/issues");
+    router.refresh();
+  } catch (error) {
+    setError(true);
+  }
+};
+
+return(
+  <Button color='red' onClick={deleteIssue}>
+    Delete Issue
+  </Button>;
+)
 ```
 
 ### -
