@@ -1577,7 +1577,7 @@ export default IssueFormSkeleton;
 
 ### - Adding a delete button (DeleteIssueButton.tsx)
 
-- Here some important markup is present. Need to understand.
+- Here some important critical markup is present. Need to understand.
 
 ```jsx
 // issues/[id]/page.tsx | md in taiwind is equvalent to sm in redix
@@ -1712,7 +1712,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
 
 ### - Handling Errors
 
-- If there is less code then one line. No need to do over engineering.
+- If there is less code then one line when increase code line then separate code. No need to do over engineering for one liner.
 
 ```jsx
 // issues/[id]/DeleteIssueButon.tsx (If less code then one line)
@@ -1746,7 +1746,7 @@ return(
 )
 ```
 
-### - Improving the User Experience (Spinner while deleting)
+### - Improving the User Experience (Showing Spinner while deleting)
 
 ```jsx
 // issues/[id]/DeleteIssueButton.tsx (<Spinner> theat we create in component)
@@ -1765,10 +1765,36 @@ export async function DELETE(
 
 ```
 
-### -
+### - Removing Duplicate Skeletons (Commonn loading is not get loded for skeleton. )
+
+Restructure file-folder to get ride of load common loading.tsx <br>
+issues/allFiles -> issues/list <br>
+issues/[id]/edit -> issues/edit/[id] <br>
+Search and Replace link [Click](https://prnt.sc/88p8fq6gUiSr)
 
 ```jsx
+// EditIssueButton.tsx (Update link also)
+<Link href={`/issues/edit/${issueId}`}> Edit Issue</Link>;
 
+// NavBar.tsx
+const links = [
+  { label: "Dashboard", href: "/" },
+  { label: "Issues", href: "/issues/list" },
+];
+
+// DeleteIssueButton.tsx (router.push("/issues/list"))
+const deleteIssue = async () => {
+  try {
+    // throw new Error();
+    setDeleting(true);
+    await axios.delete("/api/issues/" + issueId);
+    router.push("/issues/list");
+    router.refresh();
+  } catch (error) {
+    setDeleting(false);
+    setError(true);
+  }
+};
 ```
 
 ### -
