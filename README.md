@@ -1746,6 +1746,175 @@ return(
 )
 ```
 
+### - Improving the User Experience (Spinner while deleting)
+
+```jsx
+// issues/[id]/DeleteIssueButton.tsx (<Spinner> theat we create in component)
+<Button color='red' disabled={isDeleting}>
+  Delete Issue {isDeleting && <Spinner />}
+</Button>
+
+// api/issues/[id]/route.ts
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  delay(3000); // To simulate delay
+  ............
+}
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
 ### -
 
 ```jsx
