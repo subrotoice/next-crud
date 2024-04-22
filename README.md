@@ -1641,10 +1641,73 @@ return (
 );
 ```
 
-### -
+### - Building an API & Delete an issue
+
+- First build api then add api link to markup using axios
 
 ```jsx
+// api/issues/[id]/route.ts (Just copy from PUTCH)
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
 
+  if (!issue)
+    return NextResponse.json({ error: "Invald Issue" }, { status: 404 });
+
+  await prisma.issue.delete({
+    where: { id: issue?.id },
+  });
+
+  return NextResponse.json({});
+}
+
+// issues/[id]/DeleteIssueButton.tsx (useRouter form navigatioin)
+("use client");
+import { Button, AlertDialog, Flex, Link } from "@radix-ui/themes";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
+  const router = useRouter();
+
+  return (
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>
+        <Button color='red'>Delete Issue</Button>
+      </AlertDialog.Trigger>
+      <AlertDialog.Content>
+        <AlertDialog.Title>Delete Confirmation</AlertDialog.Title>
+        <AlertDialog.Description>
+          Are you sure you want to delete this issue? This action can not be
+          undone.
+        </AlertDialog.Description>
+        <Flex gap='3' mt='4'>
+          <AlertDialog.Cancel>
+            <Button variant='soft' color='gray'>
+              Cancel
+            </Button>
+          </AlertDialog.Cancel>
+          <AlertDialog.Action>
+            <Button
+              color='red'
+              onClick={async () => {
+                await axios.delete("/api/issues/" + issueId);
+                router.push("/issues");
+                router.refresh(); // Cache refresh
+              }}
+            >
+              Delete Issue
+            </Button>
+          </AlertDialog.Action>
+        </Flex>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
+  );
+};
 ```
 
 ### -
