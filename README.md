@@ -1797,22 +1797,31 @@ const deleteIssue = async () => {
 };
 ```
 
-### -
+## Ch-6: Authentication
 
-```jsx
+### - Setting Up NextAuth
 
+```bash
+npm install next-auth
 ```
 
-### -
+In NextAuth we need to pass configaration objects like providers, adapters
 
 ```jsx
+// /app/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth";
 
+const handler = NextAuth({
+  providers: [],
+});
+
+export { handler as GET, handler as POST };
 ```
 
-### -
+To encrypt sign authentication key using a random character. To generate ramdom string run this in terminal or [openssl](https://www.cryptool.org/en/cto/openssl/)
 
-```jsx
-
+```bash
+openssl rand -base64 32 // https://prnt.sc/HBzZGF62p2Y8
 ```
 
 ### -
