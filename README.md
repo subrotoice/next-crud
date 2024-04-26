@@ -1805,7 +1805,7 @@ const deleteIssue = async () => {
 npm install next-auth
 ```
 
-In NextAuth we need to pass configaration objects like providers, adapters.
+In NextAuth we need to pass configaration objects like providers, adapters
 
 ```jsx
 // /app/api/auth/[...nextauth]/route.ts
@@ -1824,7 +1824,7 @@ To encrypt sign authentication key using a random character. To generate ramdom 
 openssl rand -base64 32 // https://prnt.sc/HBzZGF62p2Y8
 ```
 
-### - Configuring Google Provider (.gitignore remove .env)
+### - Configuring Google Provider (.env)
 
 1. Consent Screen setup (External, App name & Support & Developer Email, Scopes-Email+Profile, No Test User, Publish)
 2. Credentials -> Create Credentials -> OAuth client ID. [See](https://prnt.sc/ZZ4F4uzYRaUt)
@@ -1845,6 +1845,196 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(token);
 }
+```
+
+### - Adding Prisma Adapter (Google User store Local site in DB)
+
+Go to [https://authjs.dev/getting-started/adapters/prisma](https://authjs.dev/getting-started/adapters/prisma)
+
+- Run this command
+
+```bash
+npm install @next-auth/prisma-adapter
+```
+
+```bash
+npx prisma format
+npx prisma migrate dev
+```
+
+- Use this if you get prisma migration error
+
+```jsx
+// @db.VarChar(100), default: @db.VarChar(191)
+model Account {
+provider          String  @db.VarChar(100)
+providerAccountId String  @db.VarChar(100)
+
+model VerificationToken {
+identifier String   @db.VarChar(100)
+token      String   @unique @db.VarChar(100)
+```
+
+```jsx
+// /app/api/auth/[...nextauth]/route.ts (Neet to change strategy to jwt)
+import GoogleProvider from "next-auth/providers/google";
+import NextAuth from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/prisma/client";
+
+const handler = NextAuth({
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+  },
+});
+
+export { handler as GET, handler as POST };
+
+```
+
+### - Add Login and Logout (NabBar.tsx with some fixes for useSession)
+
+- If we use useSession then we need to do 2 thing, 1- AuthProvider, 2-Layout Wrap
+
+```jsx
+"use client";
+
+import { useSession } from "next-auth/react";
+
+const NavBar = () => {
+  const currentPath = usePathname();
+  const { status, data: session } = useSession();
+  // console.log(currentPath);
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues/list" },
+  ];
+
+  return (
+      <ul className='flex space-x-6'>
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link
+              className={classNames({
+                "text-zinc-900": link.href === currentPath,
+                "text-zinc-500": link.href !== currentPath,
+                "hover:text-zinc-800 transition-colors": true,
+              })}
+              href={link.href}
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Box>
+        {status === "unauthenticated" ? (
+          <Link href='/api/auth/signin'>Login</Link>
+        ) : (
+          <Link href='/api/auth/signout'>Logout</Link>
+        )}
+      </Box>
+    </nav>
+  );
+};
+
+// app/auth/Provider.tsx
+"use client";
+
+import { SessionProvider } from "next-auth/react";
+import React, { PropsWithChildren } from "react";
+
+const AuthProvider = ({ children }: PropsWithChildren) => {
+  return <SessionProvider>{children}</SessionProvider>;
+};
+
+export default AuthProvider;
+
+
+// app/layout.tsx (wrap what inside body with <AuthProvider>)
+import AuthProvider from "./auth/Provider";
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang='en'>
+      <body className={inter.variable}>
+        <AuthProvider> // Added
+          <Theme accentColor='violet'>
+            <NavBar />
+            <main className='p-5 radix-themes'>
+              <Container>{children}</Container>
+            </main>
+          </Theme>
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+
+```
+
+### - Changing Layout of the NavBar (NavBar.tsx) VeryTricky
+
+```jsx
+// NavBar.tsx
+"use client";
+
+const NavBar = () => {
+  const currentPath = usePathname();
+  const { status, data: session } = useSession();
+  // console.log(currentPath);
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues/list" },
+  ];
+  return (
+    <nav className='space-x-6 border-b mb-5 py-3'>
+      <Container>
+        <Flex justify='between'>
+          <Flex align='center' gap='3'>
+            <Link href='/'>
+              <AiFillBug />
+            </Link>
+            <ul className='flex space-x-6'>
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    className={classNames({
+                      "text-zinc-900": link.href === currentPath,
+                      "text-zinc-500": link.href !== currentPath,
+                      "hover:text-zinc-800 transition-colors": true,
+                    })}
+                    href={link.href}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Flex>
+          <Box>
+            {status === "unauthenticated" ? (
+              <Link href='/api/auth/signin'>Login</Link>
+            ) : (
+              <Link href='/api/auth/signout'>Logout</Link>
+            )}
+          </Box>
+        </Flex>
+      </Container>
+    </nav>
+  );
+};
 ```
 
 ### -
