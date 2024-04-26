@@ -1899,7 +1899,7 @@ export { handler as GET, handler as POST };
 
 ```
 
-### - Add Login and Logout (NabBar.tsx with some fixes for useSession)
+### - Add the login and logout links (NabBar.tsx with some fixes for useSession)
 
 - If we use useSession then we need to do 2 thing, 1- AuthProvider, 2-Layout Wrap
 
