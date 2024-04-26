@@ -1805,7 +1805,7 @@ const deleteIssue = async () => {
 npm install next-auth
 ```
 
-In NextAuth we need to pass configaration objects like providers, adapters
+In NextAuth we need to pass configaration objects like providers, adapters.
 
 ```jsx
 // /app/api/auth/[...nextauth]/route.ts
@@ -1824,10 +1824,27 @@ To encrypt sign authentication key using a random character. To generate ramdom 
 openssl rand -base64 32 // https://prnt.sc/HBzZGF62p2Y8
 ```
 
-### -
+### - Configuring Google Provider (.gitignore remove .env)
+
+1. Consent Screen setup (External, App name & Support & Developer Email, Scopes-Email+Profile, No Test User, Publish)
+2. Credentials -> Create Credentials -> OAuth client ID. [See](https://prnt.sc/ZZ4F4uzYRaUt)
+
+- Authorized JavaScript origins - http://localhost:3000 or Production site name
+- Authorized redirect URIs - http://localhost:3000/api/auth/callback/google
+
+- Add link to NavBar { label: "Login", href: "/api/auth/signin" } <br>
+  To see the login user. JSON Web Token
 
 ```jsx
+// /app/auth/token/route.ts (OutPut: https://prnt.sc/-wnwXozYhnhP)
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(request: NextRequest) {
+  const token = await getToken({ req: request });
+
+  return NextResponse.json(token);
+}
 ```
 
 ### -
