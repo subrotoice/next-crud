@@ -1984,7 +1984,7 @@ export default function RootLayout({
 
 ```
 
-### - Changing Layout of the NavBar (NavBar.tsx) VeryTricky
+### - Changing Layout of the NavBar (NavBar.tsx) Many thing there need to learn about CSS
 
 ```jsx
 // NavBar.tsx
