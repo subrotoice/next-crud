@@ -2363,16 +2363,36 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-### -
+## Ch-7: Assigning Issues to Users
+
+### - Building the Assignee Select Component (AssigneeSelect.tsx) Just use radix < Select >
 
 ```jsx
+// issues/[id]/AssigneeSelect.tsx
+import { Select } from "@radix-ui/themes";
 
-```
+const AssigneeSelect = () => {
+  return (
+    <Select.Root>
+      <Select.Trigger placeholder='Assign...' />
+      <Select.Content>
+        <Select.Group>
+          <Select.Label>Suggestion</Select.Label>
+          <Select.Item value='1'>Subroto Biswas</Select.Item>
+        </Select.Group>
+      </Select.Content>
+    </Select.Root>
+  );
+};
 
-### -
-
-```jsx
-
+// issues/[id]/page.tsx (just use upper component)
+<Box>
+  <Flex direction='column' gap='4'>
+    <AssigneeSelect />
+    <EditIssueButton issueId={issue.id} />
+    <DeleteIssueButton issueId={issue.id} />
+  </Flex>
+</Box>;
 ```
 
 ### -
