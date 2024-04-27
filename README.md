@@ -2109,9 +2109,35 @@ const NavBar = () => {
 };
 ```
 
-### -
+### - Troubleshooting: Avatar Not Loading
+
+- Normally avater load autometically. If not then follow step1 if not work then together with step2
 
 ```jsx
+// Step1: NavBar.tsx
+<Avatar
+  src={session?.user!.image!}
+  fallback='?'
+  size='3'
+  radius='full'
+  className='cursor-pointer'
+  referrerPolicy='no-referrer'
+/>
+
+// Step2: next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [{ key: "referrer-policy", value: "no-referrer" }],
+      },
+    ];
+  },
+};
+
+export default nextConfig;
 
 ```
 
