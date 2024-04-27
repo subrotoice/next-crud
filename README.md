@@ -1824,7 +1824,7 @@ To encrypt sign authentication key using a random character. To generate ramdom 
 openssl rand -base64 32 // https://prnt.sc/HBzZGF62p2Y8
 ```
 
-### - Configuring Google Provider (.env)
+### - Configuring Google Provider (Add .env to .gitignore)
 
 1. Consent Screen setup (External, App name & Support & Developer Email, Scopes-Email+Profile, No Test User, Publish)
 2. Credentials -> Create Credentials -> OAuth client ID. [See](https://prnt.sc/ZZ4F4uzYRaUt)
@@ -1851,7 +1851,7 @@ export async function GET(request: NextRequest) {
 
 Go to [https://authjs.dev/getting-started/adapters/prisma](https://authjs.dev/getting-started/adapters/prisma)
 
-- Run this command
+- Run this commands
 
 ```bash
 npm install @next-auth/prisma-adapter
@@ -1901,7 +1901,7 @@ export { handler as GET, handler as POST };
 
 ### - Add the login and logout links (NabBar.tsx with some fixes for useSession)
 
-- If we use useSession then we need to do 2 thing, 1- AuthProvider, 2-Layout Wrap
+- If we use useSession then we need to do 2 thing, 1: Create AuthProvider, 2: Wrap Layout with AuthProvider
 
 ```jsx
 "use client";
@@ -2141,16 +2141,126 @@ export default nextConfig;
 
 ```
 
-### -
+### - Refactoring the NavBar (NavBar.tsx) Create component inside single file
+
+**Create two components AuthStatus & NavLinks inside same file. You can do it in another file. Illustrating just another way. There is no right or wrong here.**<br>
+**By doing so, NavBar has now single responsibility of laying out NavBar only**<br>
+**In AuthStatus very professional way of return in 3 conditions**<br>
+**In globals.css create single .nav-link class combining 3 tailwind class**<br>
+**! in tailwind is !important modifire in css**<br>
 
 ```jsx
+// NavBar.tsx
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
+import { AiFillBug } from "react-icons/ai";
+import classnames from "classnames";
+import { useSession } from "next-auth/react";
+import {
+  Avatar,
+  Box,
+  Container,
+  DropdownMenu,
+  Flex,
+  Text,
+} from "@radix-ui/themes";
+
+const NavBar = () => {
+  return (
+    <nav className='border-b mb-5 px-5 py-3'>
+      <Container>
+        <Flex justify='between'>
+          <Flex align='center' gap='3'>
+            <Link href='/'>
+              <AiFillBug />
+            </Link>
+            <NavLinks />
+          </Flex>
+          <AuthStatus />
+        </Flex>
+      </Container>
+    </nav>
+  );
+};
+
+const NavLinks = () => {
+  const currentPath = usePathname();
+
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues/list" },
+  ];
+
+  return (
+    <ul className='flex space-x-6'>
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link
+            className={classnames({
+              "nav-link": true,
+              "!text-zinc-900": link.href === currentPath,
+            })}
+            href={link.href}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const AuthStatus = () => {
+  const { status, data: session } = useSession();
+
+  if (status === "loading") return null;
+
+  if (status === "unauthenticated")
+    return (
+      <Link className='nav-link' href='/api/auth/signin'>
+        Login
+      </Link>
+    );
+
+  return (
+    <Box>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <Avatar
+            src={session?.user!.image!}
+            fallback='?'
+            size='3'
+            radius='full'
+            className='cursor-pointer'
+            referrerPolicy='no-referrer'
+          />
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Label>
+            <Text size='2'>{session?.user?.email}</Text>
+          </DropdownMenu.Label>
+          <DropdownMenu.Item>
+            <Link href='/api/auth/signout'>Logout</Link>
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    </Box>
+  );
+};
+export default NavBar;
 
 ```
 
-### -
-
-```jsx
-
+```css
+/* globals.css */
+@layer utilities {
+  .nav-link {
+    @apply text-zinc-500 hover:text-zinc-800 transition-colors;
+  }
+}
 ```
 
 ### -
