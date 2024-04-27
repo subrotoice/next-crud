@@ -2395,11 +2395,45 @@ const AssigneeSelect = () => {
 </Box>;
 ```
 
-### -
+### - Populating the Assignee Select Component
+
+- Building API and access data from AssigneeSelect.tsx
 
 ```jsx
+// api/users/route.ts (Building API)
+import prisma from "@/prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(request: NextRequest) {
+  const user = await prisma.user.findMany();
+  return NextResponse.json(user);
+}
+
+// issues/[id]/AssigneeSelect.tsx
+import { User } from "@prisma/client";
+import { Select } from "@radix-ui/themes";
+
+const AssigneeSelect = async () => {
+  const res = await fetch("http://localhost:3000/api/users");
+  const users: User[] = await res.json();
+
+  return (
+    <Select.Root>
+      <Select.Trigger placeholder='Assign...' />
+      <Select.Content>
+        <Select.Group>
+          <Select.Label>Suggestion</Select.Label>
+          {users.map((user) => (
+            <Select.Item value={user.id}>{user.name}</Select.Item>
+          ))}
+        </Select.Group>
+      </Select.Content>
+    </Select.Root>
+  );
+};
 ```
+
+NB: If you want to access API from client component (use client) need to use axios and keep data in state variable
 
 ### -
 
