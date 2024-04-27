@@ -2263,10 +2263,13 @@ export default NavBar;
 }
 ```
 
-### -
+### - Adding a Login Loading Skeleton
 
 ```jsx
+// NavBar.tsx (This Skeleton contains both js and css in one place)
+import { Skeleton } from "@/app/components";
 
+if (status === "loading") return <Skeleton width='3rem' />;
 ```
 
 ### -
