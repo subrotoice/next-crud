@@ -2272,28 +2272,95 @@ import { Skeleton } from "@/app/components";
 if (status === "loading") return <Skeleton width='3rem' />;
 ```
 
-### -
+### - Securing the Application (Couple of thing included to provide security for both fontend and backend )
+
+- In middleware.ts we just need to add all url in matcher array. Next-Auth redirect if to login page if not login.
 
 ```jsx
+// middleware.ts (in root directory not in App directory)
+export { default } from "next-auth/middleware";
+
+export const config = {
+  matcher: ["/issues/new", "/issues/edit/:id+"],
+};
+```
+
+- To getServerSession(), create app/auth/authOptions.ts just configaratin object which is just cut from api/auth/[...nextauth]/router.ts
+
+```jsx
+// app/auth/authOptions.ts
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/prisma/client";
+import { NextAuthOptions } from "next-auth";
+
+const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+  },
+};
+
+export default authOptions;
+
+// api/auth/[...nextauth]/router.ts
+import authOptions from "@/app/auth/authOptions";
+import NextAuth from "next-auth";
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
 
 ```
 
-### -
+- Using server session on Issue Page. app/issues/[id]/page.tsx. Tricks: For conditional rendering some elements first wrap inside <>Ok</> -> {<>Ok</>} -> {session && <>Ok</>}
 
 ```jsx
+// app/issues/[id]/page.tsx
+const session = await getServerSession(authOptions);
 
+{
+  session && (
+    <Box>
+      <Flex direction='column' gap='4'>
+        <EditIssueButton issueId={issue.id} />
+        <DeleteIssueButton issueId={issue.id} />
+      </Flex>
+    </Box>
+  );
+}
 ```
 
-### -
+- Securing API | Here also getServerSession(authOptions). [Postman Output](https://prnt.sc/_kc8ct7wQIL7)
 
 ```jsx
+// api/issues/route.ts [@POST]
+export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({}, { status: 401 });
 
-```
+  const body = await request.json();
 
-### -
+  const validation = IssueSchema.safeParse(body);
 
-```jsx
+  if (!validation.success)
+    return NextResponse.json(validation.error.format(), { status: 400 });
 
+  const newIssue = await prisma.issue.create({
+    data: {
+      title: body.title,
+      description: body.description,
+    },
+  });
+
+  return NextResponse.json(newIssue, { status: 201 });
+}
 ```
 
 ### -
