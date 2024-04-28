@@ -71,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode,
 }>) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body className={inter.className}>
         <NavBar />
         <main>{children}</main>
@@ -90,15 +90,15 @@ const NavBar = () => {
     { label: "Issues", href: "/issues" },
   ];
   return (
-    <nav className='flex space-x-6 border-b px-5 mb-5 h-14 items-center'>
-      <Link href='/'>
+    <nav className="flex space-x-6 border-b px-5 mb-5 h-14 items-center">
+      <Link href="/">
         <AiFillBug />
       </Link>
-      <ul className='flex space-x-6'>
+      <ul className="flex space-x-6">
         {links.map((link) => (
           <Link
             key={link.href}
-            className='text-zinc-500 hover:text-zinc-800 transition-colors'
+            className="text-zinc-500 hover:text-zinc-800 transition-colors"
             href={link.href}
           >
             {link.label}
@@ -315,7 +315,7 @@ const IssuesPage = () => {
 ```jsx
 // issues/page.ts
 <Button>
-  <Link href='/issues/new'>New Issue</Link>
+  <Link href="/issues/new">New Issue</Link>
 </Button>
 ```
 
@@ -329,9 +329,9 @@ import React from "react";
 
 const NewIssuePage = () => {
   return (
-    <div className='max-w-xl space-y-3'>
-      <TextField.Root placeholder='Title' />
-      <TextArea placeholder='Description' />
+    <div className="max-w-xl space-y-3">
+      <TextField.Root placeholder="Title" />
+      <TextArea placeholder="Description" />
       <Button>Submit New Issue</Button>
     </div>
   );
@@ -345,11 +345,11 @@ const NewIssuePage = () => {
 ```jsx
 // app/layout.ts
 return (
-  <html lang='en'>
+  <html lang="en">
     <body className={inter.className}>
-      <Theme accentColor='violet'>
+      <Theme accentColor="violet">
         <NavBar />
-        <main className='p-5'>{children}</main>
+        <main className="p-5">{children}</main>
         <ThemePanel />
       </Theme>
     </body>
@@ -413,8 +413,8 @@ import "easymde/dist/easymde.min.css"; // added 2
 
 const NewIssuePage = () => {
   return (
-    <div className='max-w-xl space-y-3'>
-      <TextField.Root placeholder='Title' />
+    <div className="max-w-xl space-y-3">
+      <TextField.Root placeholder="Title" />
       <SimpleMDE />
       <Button>Submit New Issue</Button>
     </div>
@@ -477,14 +477,14 @@ const NewIssuePage = () => {
 ```jsx
 // issues/new/page.tsx
 return (
-  <div className='max-w-xl'>
+  <div className="max-w-xl">
     {error && (
-      <Callout.Root color='red' className='mb-3'>
+      <Callout.Root color="red" className="mb-3">
         <Callout.Text>{error}</Callout.Text>
       </Callout.Root>
     )}
     <form
-      className='space-y-3'
+      className="space-y-3"
       onSubmit={handleSubmit(async (data) => {
         try {
           await axios.post("/api/issues", data);
@@ -495,16 +495,16 @@ return (
         }
       })}
     >
-      <TextField.Root placeholder='Title' {...register("title")} />
+      <TextField.Root placeholder="Title" {...register("title")} />
       <Controller
-        name='description'
+        name="description"
         control={control}
         render={({ field }) => (
-          <SimpleMDE placeholder='Description' {...field} />
+          <SimpleMDE placeholder="Description" {...field} />
         )}
       />
 
-      <Button type='submit'>Submit New Issue</Button>
+      <Button type="submit">Submit New Issue</Button>
     </form>
   </div>
 );
@@ -658,7 +658,7 @@ const ErrorMessage = ({ children }: PropsWithChildren) => {
   return (
     <>
       {children && (
-        <Text color='red' as='p'>
+        <Text color="red" as="p">
           {children}
         </Text>
       )}
@@ -756,19 +756,19 @@ const IssuesPage = async () => {
 
   return (
     <div>
-      <div className='mb-5'>
+      <div className="mb-5">
         <Button>
-          <Link href='/issues/new'>New Issue</Link>
+          <Link href="/issues/new">New Issue</Link>
         </Button>
       </div>
-      <Table.Root variant='surface'>
+      <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
               Status
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
               Created
             </Table.ColumnHeaderCell>
           </Table.Row>
@@ -778,12 +778,12 @@ const IssuesPage = async () => {
             <Table.Row key={issue.id}>
               <Table.Cell>
                 {issue.title}
-                <div className='md:hidden'>{issue.status}</div>
+                <div className="md:hidden">{issue.status}</div>
               </Table.Cell>
-              <Table.Cell className='hidden md:table-cell'>
+              <Table.Cell className="hidden md:table-cell">
                 {issue.status}
               </Table.Cell>
-              <Table.Cell className='hidden md:table-cell'>
+              <Table.Cell className="hidden md:table-cell">
                 {issue.createdAt.toDateString()}
               </Table.Cell>
             </Table.Row>
@@ -859,9 +859,9 @@ import React from "react";
 
 const IssueActions = () => {
   return (
-    <div className='mb-5'>
+    <div className="mb-5">
       <Button>
-        <Link href='/issues/new'>New Issue</Link>
+        <Link href="/issues/new">New Issue</Link>
       </Button>
     </div>
   );
@@ -880,14 +880,14 @@ const LoadingIssuePage = () => {
   return (
     <>
       <IssueActions />
-      <Table.Root variant='surface'>
+      <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
               Status
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className='hidden md:table-cell'>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
               Created
             </Table.ColumnHeaderCell>
           </Table.Row>
@@ -897,14 +897,14 @@ const LoadingIssuePage = () => {
             <Table.Row key={issue}>
               <Table.Cell>
                 <Skeleton />
-                <div className='md:hidden'>
+                <div className="md:hidden">
                   <Skeleton />
                 </div>
               </Table.Cell>
-              <Table.Cell className='hidden md:table-cell'>
+              <Table.Cell className="hidden md:table-cell">
                 <Skeleton />
               </Table.Cell>
-              <Table.Cell className='hidden md:table-cell'>
+              <Table.Cell className="hidden md:table-cell">
                 <Skeleton />
               </Table.Cell>
             </Table.Row>
@@ -975,7 +975,7 @@ const SingleIssuePage = async ({
   return (
     <div>
       <Heading>{issue.title}</Heading>
-      <Flex className='space-x-3' my='2'>
+      <Flex className="space-x-3" my="2">
         <IssueStatusBadge status={issue.status} />
         <Text>{issue.createdAt.toDateString()}</Text>
       </Flex>
@@ -1018,7 +1018,7 @@ plugins: [require("@tailwindcss/typography")],
 Step 3: add prose
 
 ```jsx
-<Card className='prose'>
+<Card className="prose">
   <ReactMarkdown>{issue.description}</ReactMarkdown>
 </Card>
 ```
@@ -1028,11 +1028,11 @@ Step 3: add prose
 return (
   <div>
     <Heading>{issue.title}</Heading>
-    <Flex className='space-x-3' my='2'>
+    <Flex className="space-x-3" my="2">
       <IssueStatusBadge status={issue.status} />
       <Text>{issue.createdAt.toDateString()}</Text>
     </Flex>
-    <Card className='prose' mt='4'>
+    <Card className="prose" mt="4">
       <ReactMarkdown>{issue.description}</ReactMarkdown>
     </Card>
   </div>
@@ -1074,13 +1074,13 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const LoadingIssueDetailsPage = () => {
   return (
-    <Box className='max-w-xl'>
+    <Box className="max-w-xl">
       <Skeleton />
-      <Flex className='space-x-3' my='2'>
-        <Skeleton width='3rem' />
-        <Skeleton width='5rem' />
+      <Flex className="space-x-3" my="2">
+        <Skeleton width="3rem" />
+        <Skeleton width="5rem" />
       </Flex>
-      <Card className='prose' mt='4'>
+      <Card className="prose" mt="4">
         <Skeleton count={5} />
       </Card>
     </Box>
@@ -1094,9 +1094,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const LoadingNewIssuePage = () => {
   return (
-    <Box className='max-w-xl'>
+    <Box className="max-w-xl">
       <Skeleton />
-      <Skeleton height='20rem' />
+      <Skeleton height="20rem" />
     </Box>
   );
 };
@@ -1166,11 +1166,11 @@ return (
   <Grid columns={{ initial: "1", md: "2" }}>
     <Box>
       <Heading>{issue.title}</Heading>
-      <Flex className='space-x-3' my='2'>
+      <Flex className="space-x-3" my="2">
         <IssueStatusBadge status={issue.status} />
         <Text>{issue.createdAt.toDateString()}</Text>
       </Flex>
-      <Card className='prose' mt='4'>
+      <Card className="prose" mt="4">
         <ReactMarkdown>{issue.description}</ReactMarkdown>
       </Card>
     </Box>
@@ -1216,11 +1216,11 @@ const IssueDetails = ({ issue }: { issue: Issue }) => {
   return (
     <>
       <Heading>{issue.title}</Heading>
-      <Flex className='space-x-3' my='2'>
+      <Flex className="space-x-3" my="2">
         <IssueStatusBadge status={issue.status} />
         <Text>{issue.createdAt.toDateString()}</Text>
       </Flex>
-      <Card className='prose' mt='4'>
+      <Card className="prose" mt="4">
         <ReactMarkdown>{issue.description}</ReactMarkdown>
       </Card>
     </>
@@ -1329,29 +1329,29 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   });
 
   return (
-    <div className='max-w-xl'>
+    <div className="max-w-xl">
       {error && (
-        <Callout.Root color='red' className='mb-3'>
+        <Callout.Root color="red" className="mb-3">
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form className='space-y-3' onSubmit={onSubmit}>
+      <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root
           defaultValue={issue?.title}
-          placeholder='Title'
+          placeholder="Title"
           {...register("title")}
         />
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
-          name='description'
+          name="description"
           control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMDE placeholder='Description' {...field} />
+            <SimpleMDE placeholder="Description" {...field} />
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button type='submit'>
+        <Button type="submit">
           Submit New Issue {isSubmitting && <Spinner />}
         </Button>
       </form>
@@ -1455,29 +1455,29 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
   });
 
   return (
-    <div className='max-w-xl'>
+    <div className="max-w-xl">
       {error && (
-        <Callout.Root color='red' className='mb-3'>
+        <Callout.Root color="red" className="mb-3">
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form className='space-y-3' onSubmit={onSubmit}>
+      <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root
           defaultValue={issue?.title}
-          placeholder='Title'
+          placeholder="Title"
           {...register("title")}
         />
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
-          name='description'
+          name="description"
           control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMDE placeholder='Description' {...field} />
+            <SimpleMDE placeholder="Description" {...field} />
           )}
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
-        <Button type='submit'>
+        <Button type="submit">
           {issue ? "Update Issue" : "Submit New Issue"}{" "}
           {isSubmitting && <Spinner />}
         </Button>
@@ -1561,9 +1561,9 @@ import { Skeleton } from "@/app/components";
 
 const IssueFormSkeleton = () => {
   return (
-    <Box className='max-w-xl'>
-      <Skeleton height='2rem' />
-      <Skeleton height='20rem' />
+    <Box className="max-w-xl">
+      <Skeleton height="2rem" />
+      <Skeleton height="20rem" />
     </Box>
   );
 };
@@ -1582,12 +1582,12 @@ export default IssueFormSkeleton;
 ```jsx
 // issues/[id]/page.tsx | md in taiwind is equvalent to sm in redix
 return (
-  <Grid columns={{ initial: "1", sm: "5" }} gap='3'>
-    <Box className='md:col-span-4'>
+  <Grid columns={{ initial: "1", sm: "5" }} gap="3">
+    <Box className="md:col-span-4">
       <IssueDetails issue={issue} />
     </Box>
     <Box>
-      <Flex direction='column' gap='4'>
+      <Flex direction="column" gap="4">
         <EditIssueButton issueId={issue.id} />
         <DeleteIssueButton issueId={issue.id} />
       </Flex>
@@ -1600,11 +1600,11 @@ import { Button } from "@radix-ui/themes";
 import React from "react";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
-  return <Button color='red'>Delete Issue</Button>;
+  return <Button color="red">Delete Issue</Button>;
 };
 
 // app/layout.tsx (Add container so that no matter what screen, it provide a fixed size and certer the page)
-<main className='p-5 radix-themes'>
+<main className="p-5 radix-themes">
   <Container>{children}</Container>
 </main>;
 ```
@@ -1616,7 +1616,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
 return (
   <AlertDialog.Root>
     <AlertDialog.Trigger>
-      <Button color='red'>Delete Issue</Button>
+      <Button color="red">Delete Issue</Button>
     </AlertDialog.Trigger>
     <AlertDialog.Content>
       <AlertDialog.Title>Delete Confirmation</AlertDialog.Title>
@@ -1624,14 +1624,14 @@ return (
         Are you sure you want to delete this issue? This action can not be
         undone.
       </AlertDialog.Description>
-      <Flex gap='3' mt='4'>
+      <Flex gap="3" mt="4">
         <AlertDialog.Cancel>
-          <Button variant='soft' color='gray'>
+          <Button variant="soft" color="gray">
             Cancel
           </Button>
         </AlertDialog.Cancel>
         <AlertDialog.Action>
-          <Button variant='solid' color='red'>
+          <Button variant="solid" color="red">
             Delete Issue
           </Button>
         </AlertDialog.Action>
@@ -1677,7 +1677,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>
-        <Button color='red'>Delete Issue</Button>
+        <Button color="red">Delete Issue</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content>
         <AlertDialog.Title>Delete Confirmation</AlertDialog.Title>
@@ -1685,15 +1685,15 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
           Are you sure you want to delete this issue? This action can not be
           undone.
         </AlertDialog.Description>
-        <Flex gap='3' mt='4'>
+        <Flex gap="3" mt="4">
           <AlertDialog.Cancel>
-            <Button variant='soft' color='gray'>
+            <Button variant="soft" color="gray">
               Cancel
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
             <Button
-              color='red'
+              color="red"
               onClick={async () => {
                 await axios.delete("/api/issues/" + issueId);
                 router.push("/issues");
@@ -1845,6 +1845,15 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(token);
 }
+```
+
+```jsx
+// .env file
+// DATABASE_URL = "mysql://root:@localhost:3306/issue-tracker"
+// NEXTAUTH_URL = "http://localhost:3000"
+// NEXTAUTH_SECRET = wdyN1qkDG5W0lESPiEMkj6UweqVm1vgnIvSQ8tEOjsE=
+// GOOGLE_CLIENT_ID = 8etmfb88qp1runte5v6la30.apps.googleusercontent.com
+// GOOGLE_CLIENT_SECRET = drrXvcMlrKsm2XmX
 ```
 
 ### - Adding Prisma Adapter (Google User store Local site in DB)
@@ -1999,14 +2008,14 @@ const NavBar = () => {
     { label: "Issues", href: "/issues/list" },
   ];
   return (
-    <nav className='space-x-6 border-b mb-5 py-3'>
+    <nav className="space-x-6 border-b mb-5 py-3">
       <Container>
-        <Flex justify='between'>
-          <Flex align='center' gap='3'>
-            <Link href='/'>
+        <Flex justify="between">
+          <Flex align="center" gap="3">
+            <Link href="/">
               <AiFillBug />
             </Link>
-            <ul className='flex space-x-6'>
+            <ul className="flex space-x-6">
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -2025,9 +2034,9 @@ const NavBar = () => {
           </Flex>
           <Box>
             {status === "unauthenticated" ? (
-              <Link href='/api/auth/signin'>Login</Link>
+              <Link href="/api/auth/signin">Login</Link>
             ) : (
-              <Link href='/api/auth/signout'>Logout</Link>
+              <Link href="/api/auth/signout">Logout</Link>
             )}
           </Box>
         </Flex>
@@ -2269,7 +2278,7 @@ export default NavBar;
 // NavBar.tsx (This Skeleton contains both js and css in one place)
 import { Skeleton } from "@/app/components";
 
-if (status === "loading") return <Skeleton width='3rem' />;
+if (status === "loading") return <Skeleton width="3rem" />;
 ```
 
 ### - Securing the Application (Couple of thing included to provide security for both fontend and backend )
@@ -2328,7 +2337,7 @@ const session = await getServerSession(authOptions);
 {
   session && (
     <Box>
-      <Flex direction='column' gap='4'>
+      <Flex direction="column" gap="4">
         <EditIssueButton issueId={issue.id} />
         <DeleteIssueButton issueId={issue.id} />
       </Flex>
@@ -2374,11 +2383,11 @@ import { Select } from "@radix-ui/themes";
 const AssigneeSelect = () => {
   return (
     <Select.Root>
-      <Select.Trigger placeholder='Assign...' />
+      <Select.Trigger placeholder="Assign..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestion</Select.Label>
-          <Select.Item value='1'>Subroto Biswas</Select.Item>
+          <Select.Item value="1">Subroto Biswas</Select.Item>
         </Select.Group>
       </Select.Content>
     </Select.Root>
@@ -2387,7 +2396,7 @@ const AssigneeSelect = () => {
 
 // issues/[id]/page.tsx (just use upper component)
 <Box>
-  <Flex direction='column' gap='4'>
+  <Flex direction="column" gap="4">
     <AssigneeSelect />
     <EditIssueButton issueId={issue.id} />
     <DeleteIssueButton issueId={issue.id} />
@@ -2419,7 +2428,7 @@ const AssigneeSelect = async () => {
 
   return (
     <Select.Root>
-      <Select.Trigger placeholder='Assign...' />
+      <Select.Trigger placeholder="Assign..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestion</Select.Label>
