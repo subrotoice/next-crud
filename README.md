@@ -2447,7 +2447,6 @@ NB: If you want to access API from client component (use client) need to use axi
 ### - Add Assigned Issues to Prisma Schema (schema.prisma)
 
 - Making relathonship
--
 
 ```jsx
 // prisma/schema.prisma
@@ -2463,10 +2462,78 @@ model User {
 }
 ```
 
-### -
+### - Enhance the API to assign issues (validationSchema.ts, api/issues/[id]/route.ts)
+
+- Added new zod schema(patchIssueSchema) which allow request body {title, description, assignedToUserId} optional. Because sometimes title and description are given but not assignedToUserId and vice versa
 
 ```jsx
+// validationSchema.ts (add new schema patchIssueSchema for PATCH function )
+import { z } from "zod";
 
+export const IssueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255),
+  description: z.string().min(1, "Description is required.").max(65535),
+});
+
+export const patchIssueSchema = z.object({
+  title: z.string().min(1, "Title is required.").max(255).optional(),
+  description: z
+    .string()
+    .min(1, "Description is required.")
+    .max(65535)
+    .optional(),
+  assignedToUserId: z
+    .string()
+    .min(1, "AssignedToUserId is required.")
+    .max(100)
+    .optional()
+    .nullable(),
+});
+
+// api/issues/[id]/route.ts
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({}, { status: 401 });
+
+  const body = await request.json();
+  const validation = patchIssueSchema.safeParse(body);
+
+  if (!validation.success)
+    return NextResponse.json(validation.error.format(), { status: 400 });
+
+  const { assignedToUserId, title, description } = body;
+
+  if (assignedToUserId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: assignedToUserId,
+      },
+    });
+    if (!user)
+      return NextResponse.json({ error: "Invalid User" }, { status: 400 });
+  }
+
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  if (!issue)
+    return NextResponse.json({ error: "Invald Issue" }, { status: 404 });
+
+  const updatedIssue = await prisma.issue.update({
+    where: { id: issue?.id },
+    data: {
+      title,
+      description,
+      assignedToUserId,
+    },
+  });
+
+  return NextResponse.json(updatedIssue);
+}
 ```
 
 ### -
