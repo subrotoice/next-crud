@@ -2444,10 +2444,23 @@ const AssigneeSelect = async () => {
 
 NB: If you want to access API from client component (use client) need to use axios and keep data in state variable
 
-### -
+### - Add Assigned Issues to Prisma Schema (schema.prisma)
+
+- Making relathonship
+-
 
 ```jsx
+// prisma/schema.prisma
+model Issue {
+  ......
+  assignedToUserId String?  @db.VarChar(100) // foriegn key
+  assignedToUser   User?    @relation(fields: [assignedToUserId], references: [id]) // For make it happen in prisma
+}
 
+model User {
+  .......
+  assignedIssues Issue[] // for make it happen in prisma
+}
 ```
 
 ### -
