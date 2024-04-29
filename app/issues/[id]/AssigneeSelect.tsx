@@ -15,33 +15,35 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
         setUsers(res.data);
         // console.log(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.message));
   }, []);
+
+  const assignIssue = (userId: string) => {
+    const valueUserId = userId === "unassigned" ? null : userId;
+    fetch("/api/issues/" + issue.id, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        assignedToUserId: valueUserId,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          // if you use axios then you need to to do this only .catch() work directly
+          throw new Error("Network response was not ok");
+        }
+        toast.success("Successfully saved!");
+      })
+      .catch((error) => toast.error("Could not be saved."));
+  };
 
   return (
     <>
       <Select.Root
         defaultValue={issue.assignedToUserId || "unassigned"}
-        onValueChange={(userId) => {
-          const valueUserId = userId === "unassigned" ? null : userId;
-          fetch("/api/issues/" + issue.id, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              assignedToUserId: valueUserId,
-            }),
-          })
-            .then((res) => {
-              if (!res.ok) {
-                // if you use axios then you need to to do this only .catch() work directly
-                throw new Error("Network response was not ok");
-              }
-              toast.success("Successfully saved!");
-            })
-            .catch((error) => toast.error("Could not be saved."));
-        }}
+        onValueChange={assignIssue}
       >
         <Select.Trigger placeholder="Assign..." />
         <Select.Content>
