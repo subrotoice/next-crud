@@ -2722,17 +2722,114 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
 };
 ```
 
-### -
+### - Setting up React Query (QueryClientProvider.tsx, layout.tsx)
 
-```jsx
+1. For conventional data fetching we use, useState + useEffect. But the porblem is no error handeling, no Call to backend fails and retry, No caching(every time call backend). Of course We can build this by hand but it is time consuming. So We will use react-query
+2. QueryClient contain cache for storing data that we get from backend. We use QueryClientProvider to pass this data to component tree (as it is using react Context so it should be client component).
 
+```bash
+$ npm i react-query
 ```
 
-### -
+**All about react query**
 
 ```jsx
-
+const queryClient = new QueryClient(); // hold data cache
+<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>; // spread to component tree
 ```
+
+**React Context is only available in client component**<br>
+**Next-Crud: Project**
+
+```jsx
+// app/QueryClientProvider.tsx (This component uses react context to share queryClient with our component tree )
+"use client";
+import {
+  QueryClient,
+  QueryClientProvider as ReactQueryClientProvider, // to avoide clash with this component name
+} from "@tanstack/react-query";
+import { PropsWithChildren } from "react";
+
+const queryClient = new QueryClient();
+
+const QueryClientProvider = ({ children }: PropsWithChildren) => {
+  return (
+    <ReactQueryClientProvider client={queryClient}>
+      {children}
+    </ReactQueryClientProvider>
+  );
+};
+
+// Layout.tsx
+return (
+  <html lang="en">
+    <body className={inter.variable}>
+      <QueryClientProvider>
+        <AuthProvider>
+          <Theme accentColor="violet">
+            <NavBar />
+            <main className="p-5 radix-themes">
+              <Container>{children}</Container>
+            </main>
+          </Theme>
+        </AuthProvider>
+      </QueryClientProvider>
+    </body>
+  </html>
+);
+```
+
+### - Fetching Data with React Query (AssigneeSelectReactQuery.tsx to page.tsx)
+
+Here we properly handel error and isLoading with Skeleton. We can do caching and retring by our hand, of course it is do able but we have to solve a problem that is already solved.
+
+```jsx
+// app/issues/[id]/AssigneeSelectReactQuery.tsx
+"use client";
+import { Skeleton } from "@/app/components";
+
+const AssigneeSelectReactQuery = ({ issue }: { issue: Issue }) => {
+  const {
+    data: users,
+    error,
+    isLoading,
+  } = useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: () => axios.get("/xapi/users").then((res) => res.data),
+    staleTime: 60 * 1000,
+    retry: 3,
+  });
+
+  if (isLoading) return <Skeleton />; // Skeleton parent er full width ney
+
+  if (error) return null;
+
+  return (
+    <>
+      <Select.Root
+        defaultValue={issue.assignedToUserId || "unassigned"}
+        onValueChange={assignIssue}
+      >
+        <Select.Trigger placeholder="Assign..." />
+        <Select.Content>
+          <Select.Group>
+            <Select.Label>Suggestion</Select.Label>
+            <Select.Item value="unassigned">Unassigned</Select.Item>
+            {users?.map((user) => (
+              <Select.Item key={user.id} value={user.id}>
+                {user.name}
+              </Select.Item>
+            ))}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+      <Toaster />
+    </>
+  );
+};
+```
+
+NB: Before we forget remove x from "/xapi/users"
 
 ### -
 

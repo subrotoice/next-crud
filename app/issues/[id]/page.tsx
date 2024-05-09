@@ -7,6 +7,8 @@ import DeleteIssueButton from "./DeleteIssueButton";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "./AssigneeSelect";
+import AssigneeSelectReactQuery from "./AssigneeSelectReactQuery";
+import delay from "delay";
 
 const SingleIssuePage = async ({
   params: { id },
@@ -15,7 +17,7 @@ const SingleIssuePage = async ({
 }) => {
   const session = await getServerSession(authOptions);
 
-  // await delay(3000);
+  await delay(3000);
   const issue = await prisma.issue.findUnique({
     where: { id: parseInt(id) },
   });
@@ -31,7 +33,8 @@ const SingleIssuePage = async ({
       {session && (
         <Box>
           <Flex direction="column" gap="4">
-            <AssigneeSelect issue={issue} />
+            {/* <AssigneeSelect issue={issue} /> */}
+            <AssigneeSelectReactQuery issue={issue} />
             <EditIssueButton issueId={issue.id} />
             <DeleteIssueButton issueId={issue.id} />
           </Flex>
