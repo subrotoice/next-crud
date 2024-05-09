@@ -2831,10 +2831,50 @@ const AssigneeSelectReactQuery = ({ issue }: { issue: Issue }) => {
 
 NB: Before we forget remove x from "/xapi/users"
 
-### -
+## Ch-8: Filtering, Sorting & Pagination
+
+### 8.1 Building the filter component (IssueStatusFilter.tsx - List issue page)
+
+Create filter component(IssueStatusFilter.tsx) and add this to IssueActions.tsx component
 
 ```jsx
+// app/issues/list/IssueStatusFilter.tsx
+"use client";
+import { Status } from "@prisma/client";
+import { Select } from "@radix-ui/themes";
 
+// Here typescrip will guide you, so that you can not set wrong value
+const statuses: { label: string, value?: Status }[] = [
+  { label: "All" },
+  { label: "Open", value: "OPEN" },
+  { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "Closed", value: "CLOSED" },
+];
+
+const IssueStatusFilter = () => {
+  return (
+    <Select.Root>
+      <Select.Trigger placeholder="Filter by status..." />
+      <Select.Content>
+        {statuses.map((status) => (
+          <Select.Item key={status.value} value={status.value ?? "All"}>
+            {status.label}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Root>
+  );
+};
+
+// app/issues/list/IssueActions.tsx
+return (
+  <Flex mb="5" justify="between">
+    <IssueStatusFilter />
+    <Button>
+      <Link href="/issues/new">New Issue</Link>
+    </Button>
+  </Flex>
+);
 ```
 
 ### -
