@@ -3537,10 +3537,73 @@ const LatestIssues = async () => {
 };
 ```
 
-### - 9.2 Building the IssueSummary Component
+### - 9.2 Building the IssueSummary Component (app/IssueSummary.tsx)
+
+- page.tsx passes 3 props to IssueSummary
 
 ```jsx
+// app/page.tsx
+import prisma from "@/prisma/client";
+import IssueSummary from "./IssueSummary";
+import LatestIssues from "./LatestIssues";
 
+export default async function Home() {
+  const open = await prisma.issue.count({ where: { status: "OPEN" } });
+  const inProgress = await prisma.issue.count({
+    where: { status: "IN_PROGRESS" },
+  });
+  const closed = await prisma.issue.count({ where: { status: "CLOSED" } });
+
+  return (
+    <main className="flex flex-col space-y-5">
+      <IssueSummary open={open} inProgress={inProgress} closed={closed} />
+      <LatestIssues />
+    </main>
+  );
+}
+```
+
+- Received 3 props & map to Card so need not to repeat Card in markup. Very unique work and high thought
+
+```jsx
+// app/IssueSummary.tsx
+import { Status } from "@prisma/client";
+import { Card, Flex, Text } from "@radix-ui/themes";
+import Link from "next/link";
+
+interface Props {
+  open: number;
+  inProgress: number;
+  closed: number;
+}
+
+const IssueSummary = ({ open, inProgress, closed }: Props) => {
+  const containers: { label: string, value: number, status: Status }[] = [
+    { label: "Open Issues", value: open, status: "OPEN" },
+    { label: "IN Progress Issues", value: inProgress, status: "IN_PROGRESS" },
+    { label: "Closed Issues", value: closed, status: "CLOSED" },
+  ];
+
+  return (
+    <Flex gap="4">
+      {containers.map((container) => (
+        <Card key={container.value}>
+          <Flex direction="column" gap="1">
+            <Link
+              className="text-sm font-medium"
+              href={`/issues/list?status=${container.status}`}
+            >
+              {container.label}
+            </Link>
+            <Text size="5" className="font-bold">
+              {container.value}
+            </Text>
+          </Flex>
+        </Card>
+      ))}
+    </Flex>
+  );
+};
 ```
 
 ### - 9.3 Building the BarChart Component
@@ -3550,48 +3613,6 @@ const LatestIssues = async () => {
 ```
 
 ### - 9.4 Laying Out the Dashboard
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
-
-```jsx
-
-```
-
-### -
 
 ```jsx
 
