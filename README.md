@@ -2879,7 +2879,7 @@ return (
 
 ### - 8.2 Filtering Issues
 
-Pass value onChange, using useRouter(next/Nevigation), Then received it by searchParam of page.tsx and pass this value to Prisma
+onChange pass value , using useRouter(next/Nevigation), Then received it by searchParam of page.tsx and pass this value to Prisma
 
 ```jsx
 // app/list/IssueStatusFilter.tsx
@@ -2933,10 +2933,62 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 ```
 
-### -
+### - 8.3 Making Columns Sortable (list/page.tsx)
+
+Crate columns object[] with label, value, className and map it to create table header. And make sure filter searchParams does not overwrite.
 
 ```jsx
+//list/page.tsx
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 
+interface Props {
+  searchParams: { status: Status; orderBy: keyof Issue };
+}
+
+const IssuesPage = async ({ searchParams }: Props) => {
+  const columns: { label: string; value: keyof Issue; className?: String }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", className: "hidden md:table-cell" },
+    { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  ];
+
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  const issues = await prisma.issue.findMany({
+    where: { status },
+  });
+
+  return (
+    <div>
+      <IssueActions />
+      <Table.Root variant="surface">
+        <Table.Header>
+          <Table.Row>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell key={column.value}>
+                {/* <NextLink href={`/issues/list?orderBy=${column.value}`}> */}
+                // so that filter query does not overwrite
+                <NextLink
+                  href={{
+                    query: { ...searchParams, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {column.value === searchParams.orderBy && (
+                  <ArrowUpIcon className="inline" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
+          </Table.Row>
+        </Table.Header>
+      </Table.Root>
+    </div>
+  );
+};
 ```
 
 ### -
