@@ -2946,7 +2946,7 @@ interface Props {
 }
 
 const IssuesPage = async ({ searchParams }: Props) => {
-  const columns: { label: string; value: keyof Issue; className?: String }[] = [
+  const columns: { label: string; value: keyof Issue; className?: string }[] = [
     { label: "Issue", value: "title" },
     { label: "Status", value: "status", className: "hidden md:table-cell" },
     { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
@@ -3036,10 +3036,36 @@ const issues = await prisma.issue.findMany({
 });
 ```
 
-### -
+### - 8.5 Fix Filtering Bugs (list/IssueStatusFilter.tsx)
+
+- When filter change then it remove sortOrder. To keep both on searchParams
+- Keep selected item when refresh from url, defaultValue
 
 ```jsx
+// list/IssueStatusFilter.tsx
+// Step1: to get searchParams
+const searchParams = useSearchParams();
+console.log(searchParams.get("orderBy"));
 
+// Step2: to transfer object to '?status=CLOSED&orderBy=title'
+// params is special object that use toString and make it like queryString
+const params = new URLSearchParams();
+if (status) params.append("status", status);
+if (searchParams.get("orderBy"))
+  params.append("orderBy", searchParams.get("orderBy")!);
+
+const query = params.size ? "?" + params.toString() : "";
+// console.log(query);
+
+router.push("/issues/list" + query);
+```
+
+```jsx
+// list/IssueStatusFilter.tsx
+// Keep selected item when refresh from url
+<Select.Root
+      defaultValue={searchParams.get("status") || ""}
+      onValueChange={(status) => {
 ```
 
 ### -
