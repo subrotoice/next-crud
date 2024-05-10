@@ -3467,25 +3467,89 @@ export const columnNames = columns.map((column) => column.value);
 export default IssueTable;
 ```
 
-### -
+## Ch-9: Dashboard
+
+### - 9.1 Building the LatestIssues Component (Some tricky work Flex for layouting & prisma fetch assignedUser)
+
+[Nested reads/Eager loading](https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries) via select and include: <br>
+
+This allow you to read related data from multiple tables in your database - such as a user and that user's posts. You can: <br>
+
+Use include to include related records, such as a user's posts or profile, in the query response. <br>
+Use a nested select to include specific fields from a related record. You can also nest select inside an include. <br>
+
+```jsx
+// app/page.tsx
+import LatestIssues from "./LatestIssues";
+
+export default function Home() {
+  return (
+    <main>
+      <LatestIssues />
+    </main>
+  );
+}
+
+// app/LatestIssues.tsx
+import prisma from "@/prisma/client";
+import { Avatar, Card, Flex, Heading, Table } from "@radix-ui/themes";
+import { IssueStatusBadge } from "./components";
+import Link from "next/link";
+
+const LatestIssues = async () => {
+  const issues = await prisma.issue.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    include: { assignedToUser: true },
+  });
+
+  return (
+    <Card>
+      <Heading size="4" mb="5">
+        Latest Issues
+      </Heading>
+      <Table.Root>
+        <Table.Body>
+          {issues.map((issue) => (
+            <Table.Row key={issue.id}>
+              <Table.Cell>
+                <Flex justify="between">
+                  <Flex direction="column" align="start" gap="2">
+                    <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                    <IssueStatusBadge status={issue.status} />
+                  </Flex>
+                  {issue.assignedToUser && (
+                    <Avatar
+                      src={issue.assignedToUser.image!}
+                      fallback="?"
+                      size="2"
+                      radius="full"
+                    />
+                  )}
+                </Flex>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </Card>
+  );
+};
+```
+
+### - 9.2 Building the IssueSummary Component
 
 ```jsx
 
 ```
 
-### -
+### - 9.3 Building the BarChart Component
 
 ```jsx
 
 ```
 
-### -
-
-```jsx
-
-```
-
-### -
+### - 9.4 Laying Out the Dashboard
 
 ```jsx
 
