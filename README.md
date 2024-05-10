@@ -2991,7 +2991,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 ```
 
-### - 8.4 Sorting Issues
+### - 8.4 Sorting Issues (HomeWork: DESC)
 
 ```jsx
 // Method 1: Simple and Hardcoded
@@ -3093,10 +3093,62 @@ INSERT INTO issue (title, description, status, createdAt, updatedAt) VALUES
 
 ```
 
-### -
+### - 8.7 Building the Layout of Pagination Component - Only Layout (app/components/Pagination.tsx)
+
+- To avoid distruction Just add Pagination component to page.tsx and pass different values hardcoded for testing.
 
 ```jsx
+// app/page.tsx (For testing)
+import Image from "next/image";
+import Pagination from "./components/Pagination";
 
+export default function Home() {
+  return (
+    <main>
+      <Pagination itemCount={100} pageSize={10} currentPage={10} />
+    </main>
+  );
+}
+
+// app/components/Pagination.tsx
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from "@radix-ui/react-icons";
+import { Button, Flex, Text } from "@radix-ui/themes";
+
+interface Props {
+  itemCount: number;
+  pageSize: number;
+  currentPage: number;
+}
+
+const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
+  const pageCount = Math.ceil(itemCount / pageSize);
+  if (pageCount <= 1) return null;
+
+  return (
+    <Flex align="center" gap="2">
+      <Text size="2">
+        Page {currentPage} of {pageCount}
+      </Text>
+      <Button color="gray" variant="soft" disabled={currentPage === 1}>
+        <DoubleArrowLeftIcon />
+      </Button>
+      <Button color="gray" variant="soft" disabled={currentPage === 1}>
+        <ChevronLeftIcon />
+      </Button>
+      <Button color="gray" variant="soft" disabled={currentPage === pageCount}>
+        <ChevronRightIcon />
+      </Button>
+      <Button color="gray" variant="soft" disabled={currentPage === pageCount}>
+        <DoubleArrowRightIcon />
+      </Button>
+    </Flex>
+  );
+};
 ```
 
 ### -
