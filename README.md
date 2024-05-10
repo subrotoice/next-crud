@@ -2724,7 +2724,7 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
 
 ### - Setting up React Query (QueryClientProvider.tsx, layout.tsx)
 
-1. For conventional data fetching we use, useState + useEffect. But the porblem is no error handeling, no Call to backend fails and retry, No caching(every time call backend). Of course We can build this by hand but it is time consuming. So We will use react-query
+1. For conventional data fetching we use, useState + useEffect. But the porblem is no error handeling, no Call to backend fails and retry, No caching (every time call backend). Of course We can build this by hand but it is time consuming. So We will use react-query
 2. QueryClient contain cache for storing data that we get from backend. We use QueryClientProvider to pass this data to component tree (as it is using react Context so it should be client component).
 
 ```bash
@@ -2833,7 +2833,7 @@ NB: Before we forget remove x from "/xapi/users"
 
 ## Ch-8: Filtering, Sorting & Pagination
 
-### 8.1 Building the filter component (IssueStatusFilter.tsx - List issue page)
+### 8.1 Building the filter component - Layout (IssueStatusFilter.tsx - List issue page)
 
 Create filter component(IssueStatusFilter.tsx) and add this to IssueActions.tsx component
 
@@ -2933,9 +2933,9 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 ```
 
-### - 8.3 Making Columns Sortable (list/page.tsx)
+### - 8.3 Making Columns Sortable - Layout (list/page.tsx)
 
-Crate columns object[] with label, value, className and map it to create table header. And make sure filter searchParams does not overwrite.
+Create columns array of object ie.[{},{}] with: label, value, className and map it to create table header markup. And make sure filter searchParams does not overwrite.
 
 ```jsx
 //list/page.tsx
@@ -3093,7 +3093,7 @@ INSERT INTO issue (title, description, status, createdAt, updatedAt) VALUES
 
 ```
 
-### - 8.7 Building the Layout of Pagination Component - Only Layout (app/components/Pagination.tsx)
+### - 8.7 Building the Layout of Pagination Component - Layout (app/components/Pagination.tsx) Done in 3 steps
 
 - To avoid distruction just add Pagination component to page.tsx and pass different values ie. itemCount, pageSize, currentPage as hardcoded for testing
 
@@ -3153,7 +3153,8 @@ const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
 
 ### - 8.8 Implementing Pagination (app/components/Pagination.tsx)
 
-From page.tsx you can grab searchPrams directly but from other components you have to use useSearchParams() to get queryString.
+- From page.tsx you can grab searchPrams directly but from other components you have to use useSearchParams() to get queryString.
+- searchParams received by page.tsx and reues it for finding next/previous page.
 
 ```jsx
 // app/page.tsx
@@ -3323,10 +3324,147 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 ```
 
-### -
+### - 8.10 Refactoring: Extracting IssueTable Component - (receive searchParams and Issues as Props)
+
+- At this point list/page.tsx violating single responsibility principle which is laying out. So take table to another component in same 'list' folder.
+- Shift + Alt + Right Arrow(Sevarel times) To Select a block then Cut-Paste
+- Alt + Right/Left Arrow to move cursour where it were
+- 66.9 - Refactoring the Assignee Select Componen[Watch]
 
 ```jsx
+// app/issues/list/page.tsx
+import Pagination from "@/app/components/Pagination";
+import prisma from "@/prisma/client";
+import { Status } from "@prisma/client";
+import IssueActions from "./IssueActions";
+import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
+import { Flex } from "@radix-ui/themes";
 
+interface Props {
+  searchParams: IssueQuery;
+}
+
+const IssuesPage = async ({ searchParams }: Props) => {
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  const orderBy = columnNames.includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
+  const page = parseInt(searchParams.page) || 1;
+  const pageSize = 10;
+  const where = { status };
+
+  const issues = await prisma.issue.findMany({
+    where,
+    orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  const issueCount = await prisma.issue.count({ where });
+
+  return (
+    <Flex direction="column" gap="3">
+      <IssueActions />
+      <IssueTable searchParams={searchParams} issues={issues} />
+      <Pagination
+        pageSize={pageSize}
+        currentPage={page}
+        itemCount={issueCount}
+      />
+    </Flex>
+  );
+};
+
+export const dynamic = "force-dynamic";
+
+export default IssuesPage;
+```
+
+- Import all missing imports
+- Export columnNames with only value property. We can export coumn itself but it will be a violation of encapsulation. All column properties is only necessary with this component.
+- Column and ColumnName move to bottom of this file, because someone come into this page and see all this thing but this is not main responsibility of this page.
+
+```jsx
+// app/issues/list/IssueTable.tsx
+import { IssueStatusBadge } from "@/app/components";
+import { Issue, Status } from "@prisma/client";
+import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { Table } from "@radix-ui/themes";
+import Link from "next/link";
+import NextLink from "next/link";
+
+export interface IssueQuery {
+  status: Status;
+  orderBy: keyof Issue;
+  page: string;
+}
+
+interface Props {
+  searchParams: IssueQuery;
+  issues: Issue[];
+}
+
+const IssueTable = ({ searchParams, issues }: Props) => {
+  return (
+    <Table.Root variant="surface">
+      <Table.Header>
+        <Table.Row>
+          {columns.map((column) => (
+            <Table.ColumnHeaderCell
+              key={column.value}
+              className={column.className}
+            >
+              {/* <NextLink href={`/issues/list?orderBy=${column.value}`}> */}
+              <NextLink
+                href={{
+                  query: { ...searchParams, orderBy: column.value },
+                }}
+              >
+                {column.label}
+              </NextLink>
+              {column.value === searchParams.orderBy && (
+                <ArrowUpIcon className="inline" />
+              )}
+            </Table.ColumnHeaderCell>
+          ))}
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {issues.map((issue) => (
+          <Table.Row key={issue.id}>
+            <Table.Cell>
+              <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+              <div className="md:hidden">
+                <IssueStatusBadge status={issue.status} />
+              </div>
+            </Table.Cell>
+            <Table.Cell className="hidden md:table-cell">
+              <IssueStatusBadge status={issue.status} />
+            </Table.Cell>
+            <Table.Cell className="hidden md:table-cell">
+              {issue.createdAt.toDateString()}
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Root>
+  );
+};
+
+const columns: { label: string; value: keyof Issue; className?: string }[] = [
+  { label: "Issue", value: "title" },
+  { label: "Status", value: "status", className: "hidden md:table-cell" },
+  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+];
+
+export const columnNames = columns.map((column) => column.value);
+
+export default IssueTable;
 ```
 
 ### -
