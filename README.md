@@ -2921,7 +2921,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
   const status =
     statuses.includes(searchParams.status)
       ? searchParams.status
-      : undefined;
+      : undefined; // Very tricky, If undefined then Prisma will not included it.
 
   const issues = await prisma.issue.findMany({
     where: { status },
@@ -2991,10 +2991,49 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 ```
 
-### -
+### - 8.4 Sorting Issues
 
 ```jsx
+// Method 1: Simple and Hardcoded
+const issues = await prisma.issue.findMany({
+  where: { status },
+  orderBy: { title: "asc" },
+});
 
+// Method 2: make sortParam dynamic | let orderBy="title", [orderBy] is title
+const issues = await prisma.issue.findMany({
+  where: { status },
+  orderBy: { [searchParams.orderBy]: "asc" },
+});
+
+// Method 3: First check orderBy param is exist or not then pass it to Pirsma as status filter
+const orderBy = searchParams.orderBy
+  ? { [searchParams.orderBy]: "asc" }
+  : undefined;
+
+const issues = await prisma.issue.findMany({
+  where: { status },
+  orderBy,
+});
+
+// Method 4: First check valid orderyBy in searchParams ie titlex in stade of title.
+const columns = [
+  { label: "Issue", value: "title" },
+  { label: "Status", value: "status", className: "hidden md:table-cell" },
+  { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+];
+
+// Here the idea is orderBy must be columns.value, so first we convert it array of object to array of string using map() then use includes()
+const orderBy = columns
+  .map((column) => column.value)
+  .includes(searchParams.orderBy)
+  ? { [searchParams.orderBy]: "asc" }
+  : undefined;
+
+const issues = await prisma.issue.findMany({
+  where: { status },
+  orderBy,
+});
 ```
 
 ### -
