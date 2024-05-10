@@ -17,7 +17,7 @@ const SingleIssuePage = async ({
 }) => {
   const session = await getServerSession(authOptions);
 
-  await delay(3000);
+  // await delay(3000);
   const issue = await prisma.issue.findUnique({
     where: { id: parseInt(id) },
   });

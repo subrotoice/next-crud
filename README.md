@@ -3068,9 +3068,28 @@ router.push("/issues/list" + query);
       onValueChange={(status) => {
 ```
 
-### -
+### - 8.6 Generating Dummy Data (Use ChatGPT)
+
+Prompt: Here Prisma model
 
 ```jsx
+model Issue {
+  id               Int      @id @default(autoincrement())
+  title            String   @db.VarChar(255)
+  description      String   @db.Text
+  status           Status   @default(OPEN)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+```
+
+Generate SQL statement to insert 20 records in Issue table. Use real-world titles and descriptions for issues. Status can be OPEN, IN_PROGRESS or CLOSED. Descripton should be a paragraph long. Provide different values for the createdAt and UpdatedAt columns.
+
+```sql
+INSERT INTO issue (title, description, status, createdAt, updatedAt) VALUES
+('Website loading slowly', 'Some users are reporting that the website is loading very slowly, especially during peak hours. This issue needs to be addressed urgently to prevent user dissatisfaction and potential loss of traffic.', 'OPEN', '2024-05-10 08:00:00', '2024-05-10 08:00:00'),
+('Mobile app crashes on startup', 'Several users have reported that the mobile app crashes immediately upon startup. This is affecting user experience and needs immediate attention to prevent further frustration and negative reviews.', 'IN_PROGRESS', '2024-05-10 09:30:00', '2024-05-10 09:30:00'),
+('Inconsistent display of product categories', 'Product categories are displayed inconsistently across different pages, leading to confusion among users. Standardizing the display of product categories is necessary to improve user experience and navigation.', 'OPEN', '2024-05-11 10:00:00', '2024-05-11 10:00:00');
 
 ```
 
