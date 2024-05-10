@@ -3235,10 +3235,92 @@ const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
 };
 ```
 
-### -
+### - 8.9 Paginating Issues - Now Next-CRUD Project (app/issues/list/page.tsx)
+
+status, orderBy, page this 3 searchParams pass and received from same page.tsx
 
 ```jsx
+// app/issues/list/page.tsx
+import Pagination from "@/app/components/Pagination";
 
+// Step1: Grabing 3 current queryString from URL
+interface Props {
+  searchParams: { status: Status; orderBy: keyof Issue; page: string };
+}
+
+const IssuesPage = async ({ searchParams }: Props) => {
+  const columns: { label: string; value: keyof Issue; className?: string }[] = [
+    { label: "Issue", value: "title" },
+    { label: "Status", value: "status", className: "hidden md:table-cell" },
+    { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
+  ];
+
+  // Step2: Refine 3 searchParams and then pass it to Prisma. Very high level of work done here
+  // searchParam1: status
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  // searchParam2: orderBy
+  const orderBy = columns
+    .map((column) => column.value)
+    .includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
+  // searchParam3: page
+  const page = parseInt(searchParams.page) || 1;
+  const pageSize = 10; // Later on it may be dynamic like 10, 20, 50, 100
+  const where = { status }; // It will be need in two places so make it central
+
+  const issues = await prisma.issue.findMany({
+    where,
+    orderBy,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  const issueCount = await prisma.issue.count({ where });
+
+  return (
+    <div>
+      <IssueActions />
+      <Table.Root variant="surface">
+        <Table.Header>
+          <Table.Row>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell
+                key={column.value}
+                className={column.className}
+              >
+                {/* <NextLink href={`/issues/list?orderBy=${column.value}`}> */}
+                <NextLink
+                  href={{
+                    query: { ...searchParams, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {column.value === searchParams.orderBy && (
+                  <ArrowUpIcon className="inline" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          ......
+        </Table.Body>
+      </Table.Root>
+      <Pagination
+        pageSize={pageSize}
+        currentPage={page}
+        itemCount={issueCount}
+      />
+    </div>
+  );
+};
 ```
 
 ### -
