@@ -3095,7 +3095,7 @@ INSERT INTO issue (title, description, status, createdAt, updatedAt) VALUES
 
 ### - 8.7 Building the Layout of Pagination Component - Only Layout (app/components/Pagination.tsx)
 
-- To avoid distruction Just add Pagination component to page.tsx and pass different values hardcoded for testing.
+- To avoid distruction just add Pagination component to page.tsx and pass different values ie. itemCount, pageSize, currentPage as hardcoded for testing
 
 ```jsx
 // app/page.tsx (For testing)
@@ -3151,10 +3151,88 @@ const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
 };
 ```
 
-### -
+### - 8.8 Implementing Pagination (app/components/Pagination.tsx)
+
+From page.tsx you can grab searchPrams directly but from other components you have to use useSearchParams() to get queryString.
 
 ```jsx
+// app/page.tsx
+import Pagination from "./components/Pagination";
 
+export default function Home({
+  searchParams,
+}: {
+  searchParams: { page: string },
+}) {
+  return (
+    <main>
+      <Pagination
+        itemCount={100}
+        pageSize={10}
+        currentPage={parseInt(searchParams.page)}
+      />
+    </main>
+  );
+}
+
+// app/components/Pagination.tsx
+const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams(); // to get queryString
+
+  // page = currentPage-1
+  const changePage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    router.push("?" + params.toString());
+  };
+
+  return (
+    <Flex align="center" gap="2">
+      <Text size="2">
+        Page {currentPage} of {pageCount}
+      </Text>
+      <Button
+        onClick={() => changePage(1)}
+        color="gray"
+        variant="soft"
+        disabled={currentPage === 1}
+      >
+        <DoubleArrowLeftIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          changePage(currentPage - 1);
+        }}
+        color="gray"
+        variant="soft"
+        disabled={currentPage === 1}
+      >
+        <ChevronLeftIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          changePage(currentPage + 1);
+        }}
+        color="gray"
+        variant="soft"
+        disabled={currentPage === pageCount}
+      >
+        <ChevronRightIcon />
+      </Button>
+      <Button
+        onClick={() => {
+          changePage(pageCount);
+        }}
+        color="gray"
+        variant="soft"
+        disabled={currentPage === pageCount}
+      >
+        <DoubleArrowRightIcon />
+      </Button>
+    </Flex>
+  );
+};
 ```
 
 ### -
