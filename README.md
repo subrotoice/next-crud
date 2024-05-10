@@ -2877,6 +2877,176 @@ return (
 );
 ```
 
+### - 8.2 Filtering Issues
+
+Pass value onChange, using useRouter(next/Nevigation), Then received it by searchParam of page.tsx and pass this value to Prisma
+
+```jsx
+// app/list/IssueStatusFilter.tsx
+"use client";
+import { Status } from "@prisma/client";
+
+const IssueStatusFilter = () => {
+  const router = useRouter(); // added
+
+  return (
+    <Select.Root // added
+      onValueChange={(status) => {
+        const url = status ? `?status=${status}` : "";
+        router.push(url);
+      }}
+    >
+      <Select.Trigger placeholder="Filter by status..." />
+      <Select.Content>
+        {statuses.map((status) => (
+          <Select.Item key={status.value} value={status.value ?? "All"}>
+            {status.label}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Root>
+  );
+};
+
+// app/list/page.tsx
+import { Status } from "@prisma/client";
+
+interface Props {
+  searchParams: { status: Status };
+}
+
+const IssuesPage = async ({ searchParams }: Props) => {
+  console.log(searchParams.status); // Checking if it comming or not
+  const statuses = Object.values(Status); // Getting values of an object
+  const status =
+    statuses.includes(searchParams.status)
+      ? searchParams.status
+      : undefined;
+
+  const issues = await prisma.issue.findMany({
+    where: { status },
+  });
+
+  return (
+
+  );
+};
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
+### -
+
+```jsx
+
+```
+
 ### -
 
 ```jsx
