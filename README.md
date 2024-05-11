@@ -3810,8 +3810,14 @@ See Log: [Without Cache](https://prnt.sc/eE3Bvb4Jqh-E)
 
 ### - 10.3 Removing.env File
 
-```jsx
+- Create '.env.example' so that one can understand which variable need to create
+- Go to .gitignore
+- There is a way to remove .env file form history [git-filter-repo](https://github.com/newren/git-filter-repo). See: 83.3 - Removing.env File
 
+```jsx
+# local env files
+.env*.local
+.env
 ```
 
 ### - 10.4 Setting Up Error Tracking
