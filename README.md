@@ -3606,10 +3606,56 @@ const IssueSummary = ({ open, inProgress, closed }: Props) => {
 };
 ```
 
-### - 9.3 Building the BarChart Component
+### - 9.3 Building the BarChart Component - [recharts.org](https://recharts.org)
+
+```bash
+npm install recharts
+```
+
+- There is data object with two prperty. One will set for xaxis using dataKey, and another for Bar. Bar size and fill for color.
+- To get theme color, Inspect element -> Root (data-is-root-theme) -> In style(right side) section search for 'accent'. [Click here](https://prnt.sc/qJHV8QlFaHwp)
 
 ```jsx
+// app/IssueChart.tsx
+"use client";
+import { Card } from "@radix-ui/themes";
+import {
+  ResponsiveContainer,
+  BarChart,
+  XAxis,
+  YAxis,
+  Bar,
+  Label,
+} from "recharts";
 
+interface Props {
+  open: number;
+  inProgress: number;
+  closed: number;
+}
+
+const IssueChart = ({ open, inProgress, closed }: Props) => {
+  const data = [
+    { Label: "Open", value: open },
+    { Label: "In Progress", value: inProgress },
+    { Label: "Closed", value: closed },
+  ];
+  return (
+    <Card>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data}>
+          <XAxis dataKey="label" />
+          <YAxis />
+          <Bar
+            dataKey="value"
+            barSize={60}
+            style={{ fill: "var(--violet-9)" }}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </Card>
+  );
+};
 ```
 
 ### - 9.4 Laying Out the Dashboard
