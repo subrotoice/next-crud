@@ -3729,9 +3729,84 @@ openGraph: {
 
 ### - 10.2 Optimizing Performance Using React Cache
 
-```jsx
+- If use react cache() then need not to fetch second times as we do here one form component and another for metadata.
+- cache() take a callback function and return promish so here we use callback function all are default.
 
+```jsx
+// app/issues/[id]/page.tsx
+import { cache } from "react";
+
+// Outside the component. Returning promish
+const fetchIssue = cache((issueId: number) =>
+  prisma.issue.findUnique({ where: { id: issueId } })
+);
+
+const SingleIssuePage = async ({
+  params: { id },
+}: {
+  params: { id: string },
+}) => {
+  const session = await getServerSession(authOptions);
+
+  const issue = await fetchIssue(parseInt(id));
+
+  if (!issue) notFound(); // don't use return notFound(); It return null
+
+  // md in taiwind is equvalent to sm in redix
+  return (
+    <Grid columns={{ initial: "1", sm: "5" }} gap="3">
+      <Box className="md:col-span-4">
+        <IssueDetails issue={issue} />
+      </Box>
+      {session && (
+        <Box>
+          <Flex direction="column" gap="4">
+            {/* <AssigneeSelect issue={issue} /> */}
+            <AssigneeSelectReactQuery issue={issue} />
+            <EditIssueButton issueId={issue.id} />
+            <DeleteIssueButton issueId={issue.id} />
+          </Flex>
+        </Box>
+      )}
+    </Grid>
+  );
+};
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const issue = await fetchIssue(parseInt(params.id));
+
+  return {
+    title: issue?.title,
+    description: "Description of issue " + issue?.id,
+  };
+}
 ```
+
+- To see the prove in the log. After watching remove log
+
+```jsx
+// prisma/client.ts
+import { PrismaClient } from "@prisma/client";
+
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    log: ["query"], // added
+  });
+};
+
+declare global {
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
+}
+
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+```
+
+See Log: [Without Cache](https://prnt.sc/eE3Bvb4Jqh-E)
+[With Cache](https://prnt.sc/5xRa4UhTNGG3)
 
 ### - 10.3 Removing.env File
 
