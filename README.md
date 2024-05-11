@@ -3812,7 +3812,7 @@ See Log: [Without Cache](https://prnt.sc/eE3Bvb4Jqh-E)
 
 - Create '.env.example' so that one can understand which variable need to create
 - Go to .gitignore
-- There is a way to remove .env file form history [git-filter-repo](https://github.com/newren/git-filter-repo). See: 83.3 - Removing.env File
+- There is a way to remove .env file form history. [git-filter-repo](https://github.com/newren/git-filter-repo). See: 83.3 - Removing.env File
 
 ```jsx
 # local env files
@@ -3820,16 +3820,19 @@ See Log: [Without Cache](https://prnt.sc/eE3Bvb4Jqh-E)
 .env
 ```
 
-### - 10.4 Setting Up Error Tracking
+### - 10.4 Setting Up Error Tracking [sentry.io](https://sentry.io)
 
-```jsx
-
-```
+It is for error tracking and monitoring. Because when other people use our application we dont know, they might be encounter. <br>
+Create account in sentry and create project by selecting platform "Next.js"
 
 ### - 10.5 Setting Up the Production Database
 
 ```jsx
-
+Host: sql3.freesqldatabase.com
+Database name: sql3705723
+Database user: sql3705723
+Database password: cN9zQ8sPiK
+Port number: 3306
 ```
 
 ### - 10.6 Deploying to Vercel
