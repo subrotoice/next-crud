@@ -9,6 +9,7 @@ import authOptions from "@/app/auth/authOptions";
 import AssigneeSelect from "./AssigneeSelect";
 import AssigneeSelectReactQuery from "./AssigneeSelectReactQuery";
 import delay from "delay";
+import { Metadata } from "next";
 
 const SingleIssuePage = async ({
   params: { id },
@@ -43,5 +44,16 @@ const SingleIssuePage = async ({
     </Grid>
   );
 };
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  return {
+    title: issue?.title,
+    description: "Description of issue " + issue?.id,
+  };
+}
 
 export default SingleIssuePage;

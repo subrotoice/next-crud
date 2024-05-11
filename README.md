@@ -1,15 +1,15 @@
-## Chapters
+# NEXT-CRUD Chapters
 
-Ch-1: Getting Started
-Ch-2: Creating Issues
-Ch-3: Viewing Issues
-Ch-4: Updating Issues
-Ch-5: Deleting Issues
-Ch-6: Authentication
-Ch-7: Assigning Issues to Users
-Ch-8: Filtering, Sorting, and Pagination
-Ch-9: Dashboard
-Ch-10: Going to Production
+[Ch-1: Getting Started](https://github.com/subrotoice/next-crud#ch-1-getting-started)<br>
+[Ch-2: Creating Issues](https://github.com/subrotoice/next-crud#ch-2-creating-issues)<br>
+[Ch-3: Viewing Issues](https://github.com/subrotoice/next-crud#ch-3-viewing-issues)<br>
+[Ch-4: Updating Issues](https://github.com/subrotoice/next-crud#ch-4-updating-issues)<br>
+[Ch-5: Deleting Issues](https://github.com/subrotoice/next-crud#ch-5-deleting-issues)<br>
+[Ch-6: Authentication](https://github.com/subrotoice/next-crud#ch-6-authentication)<br>
+[Ch-7: Assigning Issues to Users](https://github.com/subrotoice/next-crud#ch-7-assigning-issues-to-users)<br>
+[Ch-8: Filtering, Sorting, and Pagination](https://github.com/subrotoice/next-crud#ch-8-filtering-sorting--pagination)<br>
+[Ch-9: Dashboard](https://github.com/subrotoice/next-crud#ch-9-dashboard)<br>
+[Ch-10: Going to Production](https://github.com/subrotoice/next-crud#ch-10-Going-to-Production)<br>
 
 ## Ch-1: Getting Started
 
@@ -3689,7 +3689,69 @@ export default async function Home() {
 }
 ```
 
-### -
+## Ch-10: Going to Production
+
+### - 10.1 Adding Metadata
+
+```jsx
+// app/page.tsx  (End of file)
+export const metadata: Metadata = {
+  title: "Issue Tracker - Dashboard",
+  description: "View a summary of project issues",
+};
+
+// app/issues/list/page.tsx  (End of file)
+export const metadata: Metadata = {
+  title: "Issue Tracker - Dashboard",
+  description: "View a summary of project issues",
+};
+
+// app/issues/[id]/page.tsx  (Dynamic MetaData)
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  return {
+    title: issue?.title,
+    description: "Description of issue " + issue?.id,
+  };
+}
+```
+
+```jsx
+// HW
+openGraph: {
+  title: 'Acme',
+  description: 'Acme is a...',
+},
+```
+
+### - 10.2 Optimizing Performance Using React Cache
+
+```jsx
+
+```
+
+### - 10.3 Removing.env File
+
+```jsx
+
+```
+
+### - 10.4 Setting Up Error Tracking
+
+```jsx
+
+```
+
+### - 10.5 Setting Up the Production Database
+
+```jsx
+
+```
+
+### - 10.6 Deploying to Vercel
 
 ```jsx
 
