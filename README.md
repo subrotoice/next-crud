@@ -80,7 +80,7 @@ export default function RootLayout({
   );
 }
 
-// NavBar.tsx  (AiFillBug icon, Dynamic Menu from array of object)
+// app/NavBar.tsx  (AiFillBug icon, Dynamic Menu from array of object)
 import Link from "next/link";
 import { AiFillBug } from "react-icons/ai";
 
@@ -120,7 +120,7 @@ npm i classnames@2.3.2
 ```
 
 ```jsx
-// Conditional CSS rendering
+// app/NavBar.tsx | Conditional CSS rendering
 <Link
   key={link.href}
   className={`${

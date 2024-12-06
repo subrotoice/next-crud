@@ -83,6 +83,7 @@ model Session {
 }
 
 model VerificationToken {
+  id         Int      @id @default(autoincrement())
   identifier String   @db.VarChar(100)
   token      String   @db.VarChar(100)
   expires    DateTime
