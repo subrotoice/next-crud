@@ -3826,17 +3826,21 @@ It is for error tracking and monitoring. Because when other people use our appli
 Create account in sentry and create project by selecting platform "Next.js"
 
 ### - 10.5 Setting Up the Production Database
-
+[console.aiven.io](https://console.aiven.io) Used for MySql <br>
+First used in localhost if all ok then for live
 ```jsx
-Host: sql3.freesqldatabase.com
-Database name: sql3705723
-Database user: sql3705723
-Database password: cN9zQ8sPiK
-Port number: 3306
+DATABASE_URL = "mysql://avnadmin:Password@mysql-1f3dbfe6-bappakst-ea82.i.aivencloud.com:23195/defaultdb"
 ```
 
 ### - 10.6 Deploying to Vercel
+1. Delete old migration
+2. npx prisma migrate dev
+3. Push to GitHub
+4. Connect Vercel & GitHub Repo
+5. prisma generate && prisma migrate deploy && next build
+6. Set Environment variables. (Copy all and Paste)
+7. Hit Deploy
+8. Chenge NEXTAUTH_URL to Live Domain (Setting -> Environment Variable)
+9. Add Live Domain to Google Console(OAuth) [APIs & Services -> Credentials -> OAuth 2.0(edit) -> Add Domain to Authorized JavaScript Origins & Authorized redirect URIs]
+10. Check all environment variable has https
 
-```jsx
-
-```
