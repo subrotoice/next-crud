@@ -5,6 +5,7 @@ import IssueActions from "./IssueActions";
 import IssueTable, { columnNames, IssueQuery } from "./IssueTable";
 import { Flex } from "@radix-ui/themes";
 import { Metadata } from "next";
+import delay from "delay";
 
 interface Props {
   searchParams: IssueQuery;
@@ -32,7 +33,7 @@ const IssuesPage = async ({ searchParams }: Props) => {
   });
 
   const issueCount = await prisma.issue.count({ where });
-
+  // await delay(5000); // To simulate delay
   return (
     <Flex direction="column" gap="3">
       <IssueActions />
