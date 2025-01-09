@@ -17,6 +17,9 @@ export default async function Home() {
       <Flex direction="column" gap="5">
         <IssueSummary open={open} inProgress={inProgress} closed={closed} />
         <IssueChart open={open} inProgress={inProgress} closed={closed} />
+        <p>Open: {open}</p>
+        <p>Progress: {inProgress}</p>
+        <p>Close: {closed}</p>
       </Flex>
       <LatestIssues />
     </Grid>
